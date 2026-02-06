@@ -14,6 +14,40 @@ document.addEventListener('DOMContentLoaded', function () {
     let selectedIndex = -1;
     let debounceTimer = null;
     let lastText = '';
+    let isAIActive = false;
+
+    // Check if AI service is available
+    async function checkAIStatus() {
+        const aiBadge = document.getElementById('aiBadge');
+        const aiDot = aiBadge?.querySelector('.ai-dot');
+        const aiStatusText = document.getElementById('aiStatusText');
+
+        try {
+            const response = await fetch(AI_SERVICE_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'ngrok-skip-browser-warning': 'true'
+                },
+                body: JSON.stringify({ text: 'test', count: 1 })
+            });
+
+            if (response.ok) {
+                isAIActive = true;
+                if (aiDot) aiDot.classList.remove('offline');
+                if (aiStatusText) aiStatusText.textContent = 'AI is active';
+            } else {
+                throw new Error('AI service not available');
+            }
+        } catch (error) {
+            isAIActive = false;
+            if (aiDot) aiDot.classList.add('offline');
+            if (aiStatusText) aiStatusText.textContent = 'AI is not active';
+        }
+    }
+
+    // Check AI status on page load
+    checkAIStatus();
 
     // ========================================
     // Toolbar Functions
@@ -44,13 +78,66 @@ document.addEventListener('DOMContentLoaded', function () {
         contentEditor.focus();
     });
 
-    document.getElementById('undoBtn')?.addEventListener('click', () => {
-        document.execCommand('undo', false, null);
+    const undoBtn = document.getElementById('undoBtn');
+    const redoBtn = document.getElementById('redoBtn');
+    let undoStack = [];
+    let redoStack = [];
+    let isUndoRedo = false;
+
+    // Disable both buttons initially
+    if (undoBtn) {
+        undoBtn.disabled = true;
+        undoBtn.classList.add('disabled');
+    }
+    if (redoBtn) {
+        redoBtn.disabled = true;
+        redoBtn.classList.add('disabled');
+    }
+
+    function updateButtonStates() {
+        if (undoBtn) {
+            undoBtn.disabled = undoStack.length === 0;
+            undoBtn.classList.toggle('disabled', undoStack.length === 0);
+        }
+        if (redoBtn) {
+            redoBtn.disabled = redoStack.length === 0;
+            redoBtn.classList.toggle('disabled', redoStack.length === 0);
+        }
+    }
+
+    // Track content changes for undo
+    contentEditor.addEventListener('input', () => {
+        if (isUndoRedo) return;
+
+        undoStack.push(contentEditor.innerHTML);
+        redoStack = []; // Clear redo on new input
+        updateButtonStates();
+    });
+
+    // Save initial empty state
+    undoStack.push('');
+
+    undoBtn?.addEventListener('click', () => {
+        if (undoStack.length > 1) {
+            isUndoRedo = true;
+            const current = undoStack.pop();
+            redoStack.push(current);
+            contentEditor.innerHTML = undoStack[undoStack.length - 1];
+            updateButtonStates();
+            isUndoRedo = false;
+        }
         contentEditor.focus();
     });
 
-    document.getElementById('redoBtn')?.addEventListener('click', () => {
-        document.execCommand('redo', false, null);
+    redoBtn?.addEventListener('click', () => {
+        if (redoStack.length > 0) {
+            isUndoRedo = true;
+            const redoContent = redoStack.pop();
+            undoStack.push(redoContent);
+            contentEditor.innerHTML = redoContent;
+            updateButtonStates();
+            isUndoRedo = false;
+        }
         contentEditor.focus();
     });
 

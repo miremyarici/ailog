@@ -53,6 +53,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const filter = this.dataset.filter;
             const value = this.dataset.value;
 
+            // Handle "Choose a date" button
+            if (filter === 'timePeriod' && value === 'custom') {
+                openDatePicker();
+                return;
+            }
+
             // Toggle active state within same filter group
             const siblingBtns = this.parentElement.querySelectorAll('.filter-btn');
             siblingBtns.forEach(b => b.classList.remove('active'));
@@ -67,6 +73,130 @@ document.addEventListener('DOMContentLoaded', function () {
             applyFilters();
         });
     });
+
+    // Date Picker Modal
+    const datePickerModal = document.getElementById('datePickerModal');
+    const datePickerOverlay = document.getElementById('datePickerOverlay');
+    const datePickerSave = document.getElementById('datePickerSave');
+    const daySelect = document.getElementById('daySelect');
+    const monthSelect = document.getElementById('monthSelect');
+    const yearSelect = document.getElementById('yearSelect');
+
+    const today = new Date();
+    const currentDay = today.getDate();
+    const currentMonth = today.getMonth() + 1;
+    const currentYear = today.getFullYear();
+
+    function populateDays() {
+        const previousDay = parseInt(daySelect.value) || 1;
+        daySelect.innerHTML = '';
+
+        const month = parseInt(monthSelect.value);
+        const year = parseInt(yearSelect.value);
+        let daysInMonth = new Date(year, month, 0).getDate();
+
+        if (year === currentYear && month === currentMonth) {
+            daysInMonth = Math.min(daysInMonth, currentDay);
+        }
+
+        for (let i = 1; i <= daysInMonth; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            daySelect.appendChild(option);
+        }
+
+        if (previousDay <= daysInMonth) {
+            daySelect.value = previousDay;
+        } else {
+            daySelect.value = daysInMonth;
+        }
+    }
+
+    function populateMonths() {
+        const previousMonth = parseInt(monthSelect.value) || currentMonth;
+        monthSelect.innerHTML = '';
+
+        const year = parseInt(yearSelect.value);
+        const maxMonth = (year === currentYear) ? currentMonth : 12;
+
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'];
+
+        for (let i = 1; i <= maxMonth; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = monthNames[i - 1];
+            monthSelect.appendChild(option);
+        }
+
+        if (previousMonth <= maxMonth) {
+            monthSelect.value = previousMonth;
+        } else {
+            monthSelect.value = maxMonth;
+        }
+    }
+
+    function populateYears() {
+        yearSelect.innerHTML = '';
+        for (let i = currentYear; i >= 2020; i--) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            yearSelect.appendChild(option);
+        }
+    }
+
+    if (yearSelect && monthSelect && daySelect) {
+        populateYears();
+        populateMonths();
+        populateDays();
+
+        yearSelect.addEventListener('change', function () {
+            populateMonths();
+            populateDays();
+        });
+
+        monthSelect.addEventListener('change', populateDays);
+    }
+
+    function openDatePicker() {
+        if (datePickerModal) {
+            datePickerModal.classList.add('active');
+        }
+    }
+
+    function closeDatePicker() {
+        if (datePickerModal) {
+            datePickerModal.classList.remove('active');
+        }
+    }
+
+    if (datePickerOverlay) {
+        datePickerOverlay.addEventListener('click', closeDatePicker);
+    }
+
+    if (datePickerSave) {
+        datePickerSave.addEventListener('click', function () {
+            const day = String(daySelect.value).padStart(2, '0');
+            const month = String(monthSelect.value).padStart(2, '0');
+            const year = yearSelect.value;
+
+            currentFilters.customDate = `${year}-${month}-${day}`;
+            currentFilters.timePeriod = 'custom';
+
+            const timePeriodBtns = document.querySelectorAll('[data-filter="timePeriod"]');
+            timePeriodBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.value === 'custom') {
+                    btn.classList.add('active');
+                }
+            });
+
+            closeDatePicker();
+            applyFilters();
+        });
+    }
 
     // Sort buttons
     sortBtns.forEach(btn => {
@@ -101,6 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const params = new URLSearchParams();
         if (currentFilters.search) params.set('search', currentFilters.search);
         if (currentFilters.timePeriod) params.set('timePeriod', currentFilters.timePeriod);
+        if (currentFilters.customDate) params.set('customDate', currentFilters.customDate);
         if (currentFilters.categoryId) params.set('categoryId', currentFilters.categoryId);
         if (currentFilters.sortBy) params.set('sortBy', currentFilters.sortBy);
 

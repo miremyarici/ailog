@@ -74,6 +74,15 @@
     animation: pulse 2s infinite;
 }
 
+.ai-dot.offline {
+    background: #cc6b6b;
+    animation: none;
+}
+
+.ai-badge:has(.offline) {
+    color: #cc6b6b;
+}
+
 @keyframes pulse {
 
     0%,
@@ -156,6 +165,12 @@
 .toolbar-btn.active {
     background: var(--accent-color);
     color: white;
+}
+
+.toolbar-btn.disabled,
+.toolbar-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 .toolbar-divider {

@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const value = this.dataset.value;
 
             // Handle "Choose a date" button
-            if (filter === 'timePeriod' && value === '') {
+            if (filter === 'timePeriod' && value === 'custom') {
                 openDatePicker();
                 return;
             }

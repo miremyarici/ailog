@@ -13,7 +13,7 @@
             <article class="blog-card" data-blog-id="@blog.Id">
                 <h2 class="blog-title">@blog.Title</h2>
                 <p class="blog-author">@blog.Author?.Name</p>
-                <p class="blog-summary">@blog.Summary</p>
+                <p class="blog-summary">@blog.DisplaySummary</p>
                 <a href="#" class="read-more-btn">Continue Reading</a>
             </article>
         }
@@ -95,9 +95,6 @@
         </div>
     </section>
 </aside>
-
-<!-- Floating Action Button -->
-<button class="fab" id="createBtn" title="Create new post">+</button>
 
 @section Scripts {
     <script src="~/js/archive.js"></script>
