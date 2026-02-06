@@ -1,0 +1,80 @@
+﻿@model AIBlog.Web.Models.HomeViewModel
+@{
+    Layout = "_HomepageLayout";
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<!-- Main Content -->
+<main class="main-content" id="blogContainer">
+    @foreach (var blog in Model.RecommendedBlogs)
+    {
+        <article class="blog-card" data-blog-id="@blog.Id">
+            <h2 class="blog-title">@blog.Title</h2>
+            <p class="blog-author">@blog.Author?.Name</p>
+            <p class="blog-summary">@blog.Summary</p>
+            <a href="#" class="read-more-btn">Read More</a>
+        </article>
+    }
+
+    @if (Model.HasMorePosts)
+    {
+        <div class="load-more-container" id="loadMoreContainer">
+            <button class="load-more-btn" id="loadMoreBtn" data-page="2">
+                Load More
+            </button>
+        </div>
+    }
+</main>
+
+<!-- Right Sidebar -->
+<aside class="right-sidebar">
+    <!-- This Week's Most Read -->
+    <section class="most-read-section">
+        <h3 class="section-title">This Week's Most Read</h3>
+        @foreach (var blog in Model.MostReadBlogs)
+        {
+            <div class="most-read-card">
+                <h4 class="most-read-title">@blog.Title</h4>
+                <p class="most-read-author">@blog.Author?.Name</p>
+                <a href="#" class="click-to-read">Click to Read More</a>
+            </div>
+        }
+    </section>
+
+    <!-- Recommended Authors -->
+    <section class="authors-section-wrapper">
+        <h3 class="section-title">Recommended Authors</h3>
+        <div class="authors-section">
+            @{
+                var authorImages = new[] { 
+                    "https://i.pravatar.cc/100?img=1",
+                    "https://i.pravatar.cc/100?img=2", 
+                    "https://i.pravatar.cc/100?img=3",
+                    "https://i.pravatar.cc/100?img=4",
+                    "https://i.pravatar.cc/100?img=6"
+                };
+                var index = 0;
+            }
+            @foreach (var author in Model.RecommendedAuthors)
+            {
+                <div class="author-item">
+                    <div class="author-info">
+                        <div class="author-avatar">
+                            <img src="@authorImages[index % authorImages.Length]" alt="@author.Name" />
+                        </div>
+                        <span class="author-name">@author.Name</span>
+                    </div>
+                    <button class="follow-btn">Follow</button>
+                </div>
+                index++;
+            }
+        </div>
+    </section>
+</aside>
+
+<!-- Floating Action Button -->
+<!-- <button class="fab" id="fabBtn" title="Yeni Blog Yazısı">+</button> -->
+
+@section Scripts {
+    <script src="~/js/homepage.js" asp-append-version="true"></script>
+}

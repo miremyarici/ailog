@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AI Blog</title>
+    <meta name="description" content="AI Blog - Yapay zeka destekli blog platformu" />
+    
+    <!-- Google Fonts: Playfair Display & Source Sans Pro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="~/css/homepage.css" asp-append-version="true" />
+    
+    <!-- Theme initialization - runs before page renders to prevent flash -->
+    <script>
+        (function() {
+            var theme = localStorage.getItem('theme') || 'bright';
+            if (theme !== 'bright') {
+                document.documentElement.style.setProperty('--theme-transition', 'none');
+            }
+        })();
+    </script>
+</head>
+<body class="homepage-body">
+    <script>
+        (function() {
+            var theme = localStorage.getItem('theme') || 'bright';
+            document.body.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <div class="homepage-layout">
+        <!-- Sidebar (Sabit - Tüm Sayfalarda Ortak) -->
+        <aside class="sidebar">
+            <div class="logo">ailog</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li>
+                        <a href="/" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                            <span class="nav-icon">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                                </svg>
+                            </span>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Home/Archive" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Archive" ? "active" : "")">
+                            <span class="nav-icon">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
+                                </svg>
+                            </span>
+                            <span>Archive</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Home/Explore" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Explore" ? "active" : "")">
+                            <span class="nav-icon">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="2" y1="12" x2="22" y2="12"/>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                </svg>
+                            </span>
+                            <span>Explore</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Home/Settings" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")">
+                            <span class="nav-icon">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                                </svg>
+                            </span>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Top Bar (Sabit - Tüm Sayfalarda Ortak) -->
+        <header class="top-bar">
+            <div class="user-profile">
+                <span class="user-name">Diane Merlotte</span>
+                <div class="user-avatar">
+                    <img src="https://i.pravatar.cc/100?img=5" alt="Diane Merlotte" />
+                </div>
+                <span class="dropdown-arrow">▼</span>
+            </div>
+        </header>
+
+        <!-- Main Content (Sayfalara Göre Değişir) -->
+        @RenderBody()
+        
+        <!-- Floating Action Button - Write New Blog -->
+        <a href="@Url.Action("Write", "Home")" class="fab-button" title="Write new blog">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+        </a>
+    </div>
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

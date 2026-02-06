@@ -1,0 +1,24 @@
+# Python derleme dosyaları (Gereksiz kalabalık)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Sanal Ortam Klasörleri (Github'a asla atılmaz)
+venv/
+.venv/
+env/
+
+# Çevresel Değişkenler (Şifrelerin olduğu yer - ÇOK ÖNEMLİ)
+.env
+
+# İşletim Sistemi dosyaları
+.DS_Store
+Thumbs.db
+
+# IDE Ayarları (Editör ayarların sende kalsın)
+.vscode/
+.idea/
+
+# Veritabanı (Eğer yerel veritabanı denemeleri yaparsan)
+*.sqlite3
+*.db

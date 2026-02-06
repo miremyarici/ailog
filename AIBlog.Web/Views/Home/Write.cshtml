@@ -1,0 +1,130 @@
+@model AIBlog.Web.Models.WriteViewModel
+@{
+    ViewData["Title"] = "Write";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Write - AI Blog</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="~/css/homepage.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/write.css" asp-append-version="true" />
+</head>
+<body class="write-body" data-theme="@(ViewBag.Theme ?? "bright")">
+    <script>
+        (function() {
+            var theme = localStorage.getItem('theme') || 'bright';
+            document.body.setAttribute('data-theme', theme);
+        })();
+    </script>
+    
+    <div class="write-container">
+        <!-- Header -->
+        <header class="write-header">
+            <div class="header-left">
+                <a href="@Url.Action("Index", "Home")" class="back-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                </a>
+                <div class="ai-badge">
+                    <span class="ai-dot"></span>
+                    AI is active
+                </div>
+            </div>
+            <div class="header-right">
+                <span class="user-name">@Model.CurrentUserName</span>
+                <div class="user-avatar">
+                    @if (!string.IsNullOrEmpty(Model.CurrentUserAvatar))
+                    {
+                        <img src="@Model.CurrentUserAvatar" alt="@Model.CurrentUserName" />
+                    }
+                    else
+                    {
+                        <span>@Model.CurrentUserName?.Substring(0, 1)</span>
+                    }
+                </div>
+            </div>
+        </header>
+
+        <!-- Toolbar -->
+        <div class="editor-toolbar">
+            <div class="toolbar-group">
+                <button class="toolbar-btn" id="undoBtn" title="Undo">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 10h10a5 5 0 0 1 5 5v2M3 10l6-6M3 10l6 6"/>
+                    </svg>
+                </button>
+                <button class="toolbar-btn" id="redoBtn" title="Redo">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10H11a5 5 0 0 0-5 5v2M21 10l-6-6M21 10l-6 6"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn" id="boldBtn" title="Bold"><strong>B</strong></button>
+                <button class="toolbar-btn" id="italicBtn" title="Italic"><em>I</em></button>
+                <button class="toolbar-btn" id="underlineBtn" title="Underline"><u>U</u></button>
+                <button class="toolbar-btn" id="strikeBtn" title="Strikethrough"><s>S</s></button>
+            </div>
+            <div class="toolbar-divider"></div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn" id="imageBtn" title="Insert Image">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21,15 16,10 5,21"/>
+                    </svg>
+                </button>
+                <button class="toolbar-btn" id="listBtn" title="Bulleted List">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="8" y1="6" x2="21" y2="6"/>
+                        <line x1="8" y1="12" x2="21" y2="12"/>
+                        <line x1="8" y1="18" x2="21" y2="18"/>
+                        <circle cx="3" cy="6" r="1.5" fill="currentColor"/>
+                        <circle cx="3" cy="12" r="1.5" fill="currentColor"/>
+                        <circle cx="3" cy="18" r="1.5" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="toolbar-spacer"></div>
+            <div class="category-dropdown">
+                <select id="categorySelect">
+                    <option value="">Choose a category</option>
+                    @foreach (var category in Model.AllCategories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Editor Area -->
+        <div class="editor-content">
+            <input type="text" class="title-input" id="titleInput" placeholder="Title" maxlength="200" />
+            <div class="content-editor" id="contentEditor" contenteditable="true" data-placeholder="Start writing..."></div>
+            
+            <!-- AI Suggestions Popup -->
+            <div class="ai-suggestions" id="aiSuggestions" style="display: none;">
+                <div class="suggestions-list" id="suggestionsList"></div>
+            </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="editor-footer">
+            <button class="save-btn" id="saveBtn">Save</button>
+            <button class="publish-btn" id="publishBtn">Publish</button>
+        </div>
+    </div>
+
+    <script src="~/js/write.js"></script>
+</body>
+</html>

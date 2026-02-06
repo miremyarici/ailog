@@ -1,0 +1,273 @@
+@model AIBlog.Web.Models.SettingsViewModel
+@{
+    ViewData["Title"] = "Settings";
+    Layout = "~/Views/Shared/_HomepageLayout.cshtml";
+}
+
+<!-- Main Content -->
+<main class="main-content settings-content">
+    <!-- Account Section -->
+    <section class="settings-section">
+        <h2 class="settings-section-title">Account</h2>
+        <div class="settings-card">
+            <div class="account-row">
+                <span class="account-label">E-Mail</span>
+                <span class="account-value">@Model.MaskedEmail</span>
+                <button class="change-btn">Change</button>
+            </div>
+            <div class="account-row">
+                <span class="account-label">Phone Number</span>
+                <span class="account-value">@Model.MaskedPhone</span>
+                <button class="change-btn">Change</button>
+            </div>
+            <div class="account-row">
+                <span class="account-label">Password</span>
+                <span class="account-value">@Model.MaskedPassword</span>
+                <button class="change-btn">Change</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Theme Section -->
+    <section class="settings-section">
+        <h2 class="settings-section-title">Theme</h2>
+        <div class="theme-buttons">
+            <button class="theme-btn active" data-theme="bright">
+                <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                Bright
+            </button>
+            <button class="theme-btn" data-theme="dark">
+                <svg viewBox="0 0 24 24" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                Dark
+            </button>
+            <button class="theme-btn" data-theme="system">
+                System Default
+            </button>
+        </div>
+    </section>
+
+    <!-- Notifications Section -->
+    <section class="settings-section">
+        <h2 class="settings-section-title">Notifications</h2>
+        <div class="settings-card notifications-card">
+            <div class="notifications-header">
+                <span></span>
+                <span class="notification-col-header">E-Mail</span>
+                <span class="notification-col-header">Web</span>
+            </div>
+            
+            <div class="notification-group">
+                <h4 class="notification-group-title">Content & Subscriptions</h4>
+                <div class="notification-row">
+                    <span>New posts from authors you follow</span>
+                    <label class="toggle"><input type="checkbox"><span class="slider"></span></label>
+                    <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="notification-row">
+                    <span>Weekly Digest</span>
+                    <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+                    <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="notification-row">
+                    <span>Recommended for you</span>
+                    <label class="toggle"><input type="checkbox"><span class="slider"></span></label>
+                    <label class="toggle"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <div class="notification-group">
+                <h4 class="notification-group-title">Engagement & Social</h4>
+                <div class="notification-row">
+                    <span>Replies to your comments</span>
+                    <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+                    <label class="toggle"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+                <div class="notification-row">
+                    <span>Mentions (@@username)</span>
+                    <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+                    <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="notification-row">
+                    <span>Likes on your comments</span>
+                    <label class="toggle"><input type="checkbox"><span class="slider"></span></label>
+                    <label class="toggle"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <div class="notification-group">
+                <h4 class="notification-group-title">System & Account</h4>
+                <div class="notification-row">
+                    <span>Security alerts</span>
+                    <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+                    <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="notification-row">
+                    <span>Product updates & news</span>
+                    <label class="toggle"><input type="checkbox"><span class="slider"></span></label>
+                    <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Manage Interests Section -->
+    <section class="settings-section">
+        <h2 class="settings-section-title">Manage Interests</h2>
+        <div class="settings-card interests-card">
+            <div class="interests-tags">
+                @foreach (var category in Model.AllCategories)
+                {
+                    <button class="interest-tag @(Model.SelectedCategoryIds.Contains(category.Id) ? "selected" : "")" 
+                            data-category-id="@category.Id">@category.Name</button>
+                }
+                @if (!Model.AllCategories.Any())
+                {
+                    <button class="interest-tag selected">Technology</button>
+                    <button class="interest-tag">Lifestyle</button>
+                    <button class="interest-tag">Travel</button>
+                    <button class="interest-tag">Health & Fitness</button>
+                    <button class="interest-tag selected">Food & Drink</button>
+                    <button class="interest-tag">Culture & Arts</button>
+                    <button class="interest-tag">Business & Finance</button>
+                    <button class="interest-tag">Science</button>
+                    <button class="interest-tag selected">History</button>
+                    <button class="interest-tag">Education</button>
+                    <button class="interest-tag">Gaming</button>
+                    <button class="interest-tag">Philosophy & Ideas</button>
+                    <button class="interest-tag selected">Books & Literature</button>
+                    <button class="interest-tag">Photography</button>
+                    <button class="interest-tag">News & Trends</button>
+                    <button class="interest-tag">Other</button>
+                }
+            </div>
+            <button class="clear-all-btn">Clear All</button>
+        </div>
+    </section>
+
+    <!-- Privacy & Security Section -->
+    <section class="settings-section">
+        <h2 class="settings-section-title">Privacy & Security</h2>
+        <div class="settings-card privacy-card">
+            <div class="privacy-group">
+                <h4 class="privacy-group-title">Security</h4>
+                <div class="privacy-row">
+                    <span>Two-Factor Authentication (2FA)</span>
+                    <label class="toggle"><input type="checkbox" id="twoFactorToggle" @(Model.TwoFactorEnabled ? "checked" : "")><span class="slider"></span></label>
+                </div>
+                <div class="privacy-item">
+                    <span class="privacy-label">Active Sessions</span>
+                    <ul class="sessions-list">
+                        <li>MacBook Pro - New York, USA (current device)</li>
+                        <li>Chrome (Windows) - San Francisco, USA</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="privacy-group">
+                <h4 class="privacy-group-title">Privacy</h4>
+                <div class="privacy-row visibility-row">
+                    <span>Profile Visibility</span>
+                    <div class="visibility-buttons">
+                        <button class="visibility-btn @(Model.ProfileVisibility == "Public" ? "active" : "")" data-visibility="Public">Public</button>
+                        <button class="visibility-btn @(Model.ProfileVisibility == "Members Only" ? "active" : "")" data-visibility="Members Only">Members Only</button>
+                        <button class="visibility-btn @(Model.ProfileVisibility == "Private" ? "active" : "")" data-visibility="Private">Private</button>
+                    </div>
+                </div>
+                <div class="privacy-row">
+                    <span>Search Engine Visibility</span>
+                    <label class="toggle"><input type="checkbox" @(Model.SearchEngineVisibility ? "checked" : "")><span class="slider"></span></label>
+                </div>
+                <div class="privacy-row">
+                    <span>Likes on your comments</span>
+                    <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <div class="privacy-group">
+                <h4 class="privacy-group-title">Data & Rights</h4>
+                <div class="data-actions">
+                    <button class="data-btn download-btn">Download My Data</button>
+                    <button class="data-btn delete-btn">Delete Account</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Email Change Modal -->
+<div class="settings-modal" id="emailModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h3 class="modal-title">Change Email</h3>
+        <div class="modal-body">
+            <label>New Email Address</label>
+            <input type="email" id="newEmailInput" placeholder="Enter new email" />
+        </div>
+        <div class="modal-actions">
+            <button class="modal-cancel-btn">Cancel</button>
+            <button class="modal-save-btn" id="saveEmail">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Phone Change Modal -->
+<div class="settings-modal" id="phoneModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h3 class="modal-title">Change Phone Number</h3>
+        <div class="modal-body">
+            <label>New Phone Number</label>
+            <input type="tel" id="newPhoneInput" placeholder="Enter new phone number" />
+        </div>
+        <div class="modal-actions">
+            <button class="modal-cancel-btn">Cancel</button>
+            <button class="modal-save-btn" id="savePhone">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Password Change Modal -->
+<div class="settings-modal" id="passwordModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h3 class="modal-title">Change Password</h3>
+        <div class="modal-body">
+            <label>Current Password</label>
+            <input type="password" id="currentPasswordInput" placeholder="Enter current password" />
+            <label>New Password</label>
+            <input type="password" id="newPasswordInput" placeholder="Enter new password" />
+            <label>Confirm New Password</label>
+            <input type="password" id="confirmPasswordInput" placeholder="Confirm new password" />
+        </div>
+        <div class="modal-actions">
+            <button class="modal-cancel-btn">Cancel</button>
+            <button class="modal-save-btn" id="savePassword">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- 2FA Setup Modal -->
+<div class="settings-modal" id="twoFactorModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <h3 class="modal-title">Enable Two-Factor Authentication</h3>
+        <div class="modal-body">
+            <p class="modal-description">Scan the QR code with your authenticator app (Google Authenticator, Authy, etc.), then enter the 6-digit code below.</p>
+            <div class="qr-placeholder">
+                <div id="qrCodeContainer"></div>
+            </div>
+            <p class="secret-key-display">Manual entry key: <strong id="secretKeyDisplay"></strong></p>
+            <label>Verification Code</label>
+            <input type="text" id="twoFactorCode" placeholder="Enter 6-digit code" maxlength="6" />
+        </div>
+        <div class="modal-actions">
+            <button class="modal-cancel-btn" id="cancel2FA">Cancel</button>
+            <button class="modal-save-btn" id="confirm2FA">Enable 2FA</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="~/js/settings.js"></script>
+}
