@@ -101,16 +101,26 @@
                     <option value="">Choose a category</option>
                     @foreach (var category in Model.AllCategories)
                     {
-                        <option value="@category.Id">@category.Name</option>
+                        if (Model.ExistingCategoryId == category.Id)
+                        {
+                            <option value="@category.Id" selected>@category.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
                     }
                 </select>
             </div>
         </div>
 
+        <input type="hidden" id="editingPostId" value="@(Model.EditingPostId?.ToString() ?? "")" />
+        <input type="file" id="imageFileInput" accept="image/*" style="display: none;" />
+
         <!-- Editor Area -->
         <div class="editor-content">
-            <input type="text" class="title-input" id="titleInput" placeholder="Title" maxlength="200" />
-            <div class="content-editor" id="contentEditor" contenteditable="true" data-placeholder="Start writing..."></div>
+            <input type="text" class="title-input" id="titleInput" placeholder="Title" maxlength="200" value="@(Model.ExistingTitle ?? "")" />
+            <div class="content-editor" id="contentEditor" contenteditable="true" data-placeholder="Start writing...">@Html.Raw(Model.ExistingContent ?? "")</div>
             
             <!-- AI Suggestions Popup -->
             <div class="ai-suggestions" id="aiSuggestions" style="display: none;">

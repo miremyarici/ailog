@@ -6,35 +6,71 @@
 
 <!-- Main Content -->
 <main class="main-content" id="blogContainer">
-    @if (Model.ReadBlogs.Any())
-    {
-        @foreach (var blog in Model.ReadBlogs)
-        {
-            <article class="blog-card" data-blog-id="@blog.Id">
-                <h2 class="blog-title">@blog.Title</h2>
-                <p class="blog-author">@blog.Author?.Name</p>
-                <p class="blog-summary">@blog.DisplaySummary</p>
-                <a href="#" class="read-more-btn">Continue Reading</a>
-            </article>
-        }
+    <!-- Archive Tabs -->
+    <div class="archive-tabs">
+        <button class="archive-tab @(Model.ActiveTab == "read" ? "active" : "")" data-tab="read">Read Posts</button>
+        <button class="archive-tab @(Model.ActiveTab == "drafts" ? "active" : "")" data-tab="drafts">My Drafts</button>
+    </div>
 
-        @if (Model.HasMorePosts)
+    <!-- Read Posts Tab Content -->
+    <div class="tab-content @(Model.ActiveTab == "read" ? "active" : "")" id="tabRead">
+        @if (Model.ReadBlogs.Any())
         {
-            <div class="load-more-container" id="loadMoreContainer">
-                <button class="load-more-btn" id="loadMoreBtn" data-page="2">
-                    Load More
-                </button>
+            @foreach (var blog in Model.ReadBlogs)
+            {
+                <article class="blog-card" data-blog-id="@blog.Id">
+                    <h2 class="blog-title">@blog.Title</h2>
+                    <p class="blog-author">@blog.Author?.Name</p>
+                    <p class="blog-summary">@blog.DisplaySummary</p>
+                    <a href="#" class="read-more-btn">Continue Reading</a>
+                </article>
+            }
+
+            @if (Model.HasMorePosts)
+            {
+                <div class="load-more-container" id="loadMoreContainer">
+                    <button class="load-more-btn" id="loadMoreBtn" data-page="2">
+                        Load More
+                    </button>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <h2>No read history yet</h2>
+                <p>Start reading articles to build your archive!</p>
+                <a href="/" class="read-more-btn">Browse Articles</a>
             </div>
         }
-    }
-    else
-    {
-        <div class="empty-state">
-            <h2>No read history yet</h2>
-            <p>Start reading articles to build your archive!</p>
-            <a href="/" class="read-more-btn">Browse Articles</a>
-        </div>
-    }
+    </div>
+
+    <!-- Drafts Tab Content -->
+    <div class="tab-content @(Model.ActiveTab == "drafts" ? "active" : "")" id="tabDrafts">
+        @if (Model.DraftBlogs.Any())
+        {
+            @foreach (var blog in Model.DraftBlogs)
+            {
+                <article class="blog-card" data-blog-id="@blog.Id">
+                    <h2 class="blog-title">@blog.Title</h2>
+                    <p class="blog-author">@blog.Category?.Name</p>
+                    <p class="blog-summary">@blog.DisplaySummary</p>
+                    <div class="draft-meta">
+                        <span class="draft-date">Saved @blog.CreatedAt.ToString("dd MMM yyyy")</span>
+                        <a href="/Home/Write?id=@blog.Id" class="read-more-btn">Edit</a>
+                    </div>
+                </article>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <h2>No drafts yet</h2>
+                <p>Your saved but unpublished posts will appear here.</p>
+                <a href="@Url.Action("Write", "Home")" class="read-more-btn">Write a Post</a>
+            </div>
+        }
+    </div>
 </main>
 
 <!-- Right Sidebar - Filters & Sorting -->

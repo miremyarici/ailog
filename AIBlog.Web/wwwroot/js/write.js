@@ -15,6 +15,20 @@ document.addEventListener('DOMContentLoaded', function () {
     let debounceTimer = null;
     let lastText = '';
     let isAIActive = false;
+    let savedRange = null;
+
+    // Save the editor selection/range whenever it changes so we can restore it
+    // when the user clicks a suggestion (which steals focus from the editor)
+    document.addEventListener('selectionchange', function () {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            // Only save if the selection is inside the content editor
+            if (contentEditor.contains(range.startContainer)) {
+                savedRange = range.cloneRange();
+            }
+        }
+    });
 
     // Check if AI service is available
     async function checkAIStatus() {
@@ -74,8 +88,106 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('listBtn')?.addEventListener('click', () => {
-        document.execCommand('insertUnorderedList', false, null);
         contentEditor.focus();
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+
+        const range = selection.getRangeAt(0);
+
+        // Get the text node(s) in the selection
+        // Find the start and end block-level elements
+        let startNode = range.startContainer;
+        let endNode = range.endContainer;
+
+        // Walk up to direct children of contentEditor
+        function getLineNode(node) {
+            while (node && node.parentNode !== contentEditor) {
+                node = node.parentNode;
+            }
+            return node;
+        }
+
+        const startLine = getLineNode(startNode);
+        const endLine = getLineNode(endNode);
+
+        // Collect all line nodes in range
+        const lines = [];
+        let current = startLine;
+        while (current) {
+            lines.push(current);
+            if (current === endLine) break;
+            current = current.nextSibling;
+        }
+
+        // Toggle ● prefix on each line
+        lines.forEach(line => {
+            if (line.nodeType === Node.TEXT_NODE) {
+                const text = line.textContent;
+                if (text.startsWith('● ')) {
+                    line.textContent = text.substring(2);
+                } else {
+                    line.textContent = '● ' + text;
+                }
+            } else if (line.nodeType === Node.ELEMENT_NODE) {
+                const text = line.textContent;
+                if (text.startsWith('● ')) {
+                    line.innerHTML = line.innerHTML.replace('● ', '');
+                } else {
+                    line.insertBefore(document.createTextNode('● '), line.firstChild);
+                }
+            }
+        });
+    });
+
+    // Insert Image from device
+    const imageFileInput = document.getElementById('imageFileInput');
+    document.getElementById('imageBtn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (imageFileInput) {
+            imageFileInput.click();
+        }
+    });
+
+    imageFileInput?.addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            contentEditor.focus();
+
+            // Restore cursor position
+            if (savedRange) {
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(savedRange);
+            }
+
+            // Create img element and insert at cursor
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.maxWidth = '100%';
+            img.style.borderRadius = '8px';
+            img.style.margin = '8px 0';
+
+            const selection = window.getSelection();
+            if (selection.rangeCount) {
+                const range = selection.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(img);
+
+                // Move cursor after the image
+                range.setStartAfter(img);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                contentEditor.appendChild(img);
+            }
+        };
+        reader.readAsDataURL(file);
+        // Reset so the same file can be selected again
+        this.value = '';
     });
 
     const undoBtn = document.getElementById('undoBtn');
@@ -139,14 +251,6 @@ document.addEventListener('DOMContentLoaded', function () {
             isUndoRedo = false;
         }
         contentEditor.focus();
-    });
-
-    document.getElementById('imageBtn')?.addEventListener('click', () => {
-        const url = prompt('Enter image URL:');
-        if (url) {
-            document.execCommand('insertImage', false, url);
-            contentEditor.focus();
-        }
     });
 
     // ========================================
@@ -242,9 +346,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         aiSuggestions.style.display = 'block';
 
-        // Add click handlers
+        // Use mousedown + preventDefault to prevent the click from stealing
+        // focus away from the editor (which would lose the cursor position)
         suggestionsList.querySelectorAll('.suggestion-item').forEach(item => {
-            item.addEventListener('click', () => {
+            item.addEventListener('mousedown', (e) => {
+                e.preventDefault();
                 insertSuggestion(predictions[parseInt(item.dataset.index)]);
             });
         });
@@ -262,9 +368,26 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function insertSuggestion(word) {
+        // Restore the saved editor range (in case focus was lost by clicking)
         const selection = window.getSelection();
+        let range = null;
+
+        // Try to use the current selection if it's inside the editor
         if (selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
+            const currentRange = selection.getRangeAt(0);
+            if (contentEditor.contains(currentRange.startContainer)) {
+                range = currentRange;
+            }
+        }
+
+        // If current selection is not in the editor, restore the saved range
+        if (!range && savedRange) {
+            range = savedRange.cloneRange();
+        }
+
+        if (range) {
+            // Collapse range to end to ensure we insert at the cursor position
+            range.collapse(false);
 
             // Check if we need a space before the word
             const textBefore = getPlainText();
@@ -306,13 +429,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (fullText === lastText) return;
         lastText = fullText;
 
-        // Wait 300ms after user stops typing (shorter for responsiveness)
+        // Wait 150ms after user stops typing for fast responsiveness
         debounceTimer = setTimeout(async () => {
             showLoading();
             // Send ENTIRE text to AI for full context analysis
             const predictions = await fetchAIPredictions(fullText);
             showSuggestions(predictions);
-        }, 300);
+        }, 150);
     }
 
     // Listen for content changes
@@ -376,16 +499,76 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // ========================================
-    // Save and Publish - DISABLED FOR NOW
+    // Save and Publish
     // ========================================
 
+    function saveBlog(isPublished) {
+        const title = titleInput.value.trim();
+        const content = contentEditor.innerHTML.trim();
+        const categoryId = categorySelect ? parseInt(categorySelect.value) : 0;
+        const editingPostId = document.getElementById('editingPostId')?.value;
+
+        // Validation
+        if (!title) {
+            alert('Please enter a title.');
+            titleInput.focus();
+            return;
+        }
+
+        if (!content || content === '<br>') {
+            alert('Please write some content.');
+            contentEditor.focus();
+            return;
+        }
+
+        if (!categoryId) {
+            alert('Please choose a category.');
+            categorySelect?.focus();
+            return;
+        }
+
+        const payload = {
+            title: title,
+            content: content,
+            categoryId: categoryId,
+            isPublished: isPublished
+        };
+
+        // Include ID if editing an existing post
+        if (editingPostId) {
+            payload.id = parseInt(editingPostId);
+        }
+
+        fetch('/Home/SaveBlog', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (isPublished) {
+                        alert('Your post has been published!');
+                        window.location.href = '/Home/Profile';
+                    } else {
+                        alert('Your draft has been saved!');
+                        window.location.href = '/Home/Archive?tab=drafts';
+                    }
+                } else {
+                    alert('Error: ' + (data.error || 'Something went wrong.'));
+                }
+            })
+            .catch(error => {
+                console.error('Error saving blog:', error);
+                alert('An error occurred while saving. Please try again.');
+            });
+    }
+
     document.getElementById('saveBtn')?.addEventListener('click', function () {
-        // Disabled - just show message
-        alert('Save functionality coming soon!');
+        saveBlog(false);
     });
 
     document.getElementById('publishBtn')?.addEventListener('click', function () {
-        // Disabled - just show message
-        alert('Publish functionality coming soon!');
+        saveBlog(true);
     });
 });

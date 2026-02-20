@@ -18,6 +18,13 @@ public class HomeController : Controller
         _context = context;
     }
 
+    public override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)
+    {
+        base.OnActionExecuting(context);
+        var author = _context.Authors.FirstOrDefault(a => a.Id == 1);
+        ViewBag.CurrentUserAvatar = author?.Avatar;
+    }
+
     public async Task<IActionResult> Index()
     {
         // Get current user's interests
@@ -116,7 +123,7 @@ public class HomeController : Controller
     }
 
     // Write Blog Page
-    public async Task<IActionResult> Write()
+    public async Task<IActionResult> Write(int? id)
     {
         var author = await _context.Authors.FirstOrDefaultAsync(a => a.Id == 1);
         var categories = await _context.Categories.ToListAsync();
@@ -127,6 +134,19 @@ public class HomeController : Controller
             CurrentUserAvatar = author?.Avatar,
             AllCategories = categories
         };
+
+        // If editing an existing draft
+        if (id.HasValue)
+        {
+            var existingPost = await _context.BlogPosts.FirstOrDefaultAsync(b => b.Id == id.Value && b.AuthorId == 1);
+            if (existingPost != null)
+            {
+                viewModel.EditingPostId = existingPost.Id;
+                viewModel.ExistingTitle = existingPost.Title;
+                viewModel.ExistingContent = existingPost.Content;
+                viewModel.ExistingCategoryId = existingPost.CategoryId;
+            }
+        }
 
         return View(viewModel);
     }
@@ -146,20 +166,42 @@ public class HomeController : Controller
                 .Replace("'", "")
                 .Replace("\"", "");
 
-            var blogPost = new BlogPost
-            {
-                Title = request.Title,
-                Content = request.Content,
-                Summary = summary.Trim(),
-                Slug = slug,
-                AuthorId = 1, // Current user
-                CategoryId = request.CategoryId,
-                IsPublished = request.IsPublished,
-                CreatedAt = DateTime.Now,
-                ReadCount = 0
-            };
+            BlogPost? blogPost;
 
-            _context.BlogPosts.Add(blogPost);
+            // Update existing post or create new
+            if (request.Id.HasValue)
+            {
+                blogPost = await _context.BlogPosts.FirstOrDefaultAsync(b => b.Id == request.Id.Value && b.AuthorId == 1);
+                if (blogPost == null)
+                {
+                    return Ok(new { success = false, error = "Post not found." });
+                }
+
+                blogPost.Title = request.Title;
+                blogPost.Content = request.Content;
+                blogPost.Summary = summary.Trim();
+                blogPost.Slug = slug;
+                blogPost.CategoryId = request.CategoryId;
+                blogPost.IsPublished = request.IsPublished;
+            }
+            else
+            {
+                blogPost = new BlogPost
+                {
+                    Title = request.Title,
+                    Content = request.Content,
+                    Summary = summary.Trim(),
+                    Slug = slug,
+                    AuthorId = 1, // Current user
+                    CategoryId = request.CategoryId,
+                    IsPublished = request.IsPublished,
+                    CreatedAt = DateTime.Now,
+                    ReadCount = 0
+                };
+
+                _context.BlogPosts.Add(blogPost);
+            }
+
             await _context.SaveChangesAsync();
 
             return Ok(new { success = true, id = blogPost.Id });
@@ -176,6 +218,7 @@ public class HomeController : Controller
         string? timePeriod,
         int? categoryId,
         string sortBy = "newest",
+        string tab = "read",
         int page = 1)
     {
         // Get all categories for filter
@@ -233,11 +276,21 @@ public class HomeController : Controller
             .Take(PageSize)
             .ToListAsync();
 
+        // Get user's draft (unpublished) blog posts
+        var draftBlogs = await _context.BlogPosts
+            .Include(b => b.Author)
+            .Include(b => b.Category)
+            .Where(b => b.AuthorId == 1 && !b.IsPublished)
+            .OrderByDescending(b => b.CreatedAt)
+            .ToListAsync();
+
         var viewModel = new ArchiveViewModel
         {
             ReadBlogs = blogs,
+            DraftBlogs = draftBlogs,
             Categories = categories,
             CurrentUserName = "Diane Merlotte",
+            ActiveTab = tab,
             SearchQuery = search,
             TimePeriod = timePeriod,
             CategoryId = categoryId,
@@ -458,6 +511,50 @@ public class HomeController : Controller
         return Json(new { posts, hasMore, currentPage = page });
     }
 
+    // Profile Page
+    public async Task<IActionResult> Profile()
+    {
+        // Get current author (simulating logged-in user)
+        var author = await _context.Authors.FirstOrDefaultAsync(a => a.Id == 1);
+
+        if (author == null)
+        {
+            return RedirectToAction("Index");
+        }
+
+        // Get user's published blog posts
+        var userPosts = await _context.BlogPosts
+            .Include(b => b.Author)
+            .Include(b => b.Category)
+            .Where(b => b.AuthorId == 1 && b.IsPublished)
+            .OrderByDescending(b => b.CreatedAt)
+            .ToListAsync();
+
+        // Right sidebar data (same as Home page)
+        var mostReadBlogs = await _context.BlogPosts
+            .Include(b => b.Author)
+            .Where(b => b.IsPublished)
+            .OrderByDescending(b => b.ReadCount)
+            .Take(3)
+            .ToListAsync();
+
+        var recommendedAuthors = await _context.Authors
+            .Where(a => a.Id != 1) // Exclude current user from recommendations
+            .OrderByDescending(a => a.FollowersCount)
+            .Take(5)
+            .ToListAsync();
+
+        var viewModel = new ProfileViewModel
+        {
+            Author = author,
+            UserPosts = userPosts,
+            MostReadBlogs = mostReadBlogs,
+            RecommendedAuthors = recommendedAuthors
+        };
+
+        return View(viewModel);
+    }
+
     public async Task<IActionResult> Settings()
     {
         // Get current author (simulating logged-in user)
@@ -630,6 +727,7 @@ public class UpdateSearchVisibilityRequest { public bool Visible { get; set; } }
 public class UpdateInterestsRequest { public List<int> CategoryIds { get; set; } = new(); }
 public class SaveBlogRequest 
 { 
+    public int? Id { get; set; }
     public string Title { get; set; } = ""; 
     public string Content { get; set; } = ""; 
     public int CategoryId { get; set; }

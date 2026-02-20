@@ -7,6 +7,8 @@ public class Author
     public string? Avatar { get; set; }
     public string? Bio { get; set; }
     public int FollowersCount { get; set; }
+    public int FollowingCount { get; set; }
+    public string? CoverPhoto { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     
     // Account fields

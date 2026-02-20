@@ -6,14 +6,41 @@ document.addEventListener('DOMContentLoaded', function () {
     const filterBtns = document.querySelectorAll('.filter-btn');
     const sortBtns = document.querySelectorAll('.sort-btn');
     const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const archiveTabs = document.querySelectorAll('.archive-tab');
 
     // Current filter state
     let currentFilters = {
         search: searchInput ? searchInput.value : '',
         timePeriod: '',
         categoryId: '',
-        sortBy: 'newest'
+        sortBy: 'newest',
+        tab: document.querySelector('.archive-tab.active')?.dataset.tab || 'read'
     };
+
+    // Tab switching
+    archiveTabs.forEach(tab => {
+        tab.addEventListener('click', function () {
+            const targetTab = this.dataset.tab;
+
+            // Update active tab button
+            archiveTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+
+            // Show/hide tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            if (targetTab === 'read') {
+                document.getElementById('tabRead')?.classList.add('active');
+            } else {
+                document.getElementById('tabDrafts')?.classList.add('active');
+            }
+
+            // Update filter state
+            currentFilters.tab = targetTab;
+        });
+    });
 
     // Get active filters from buttons
     filterBtns.forEach(btn => {
@@ -234,6 +261,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (currentFilters.customDate) params.set('customDate', currentFilters.customDate);
         if (currentFilters.categoryId) params.set('categoryId', currentFilters.categoryId);
         if (currentFilters.sortBy) params.set('sortBy', currentFilters.sortBy);
+        if (currentFilters.tab) params.set('tab', currentFilters.tab);
 
         window.location.href = '/Home/Archive?' + params.toString();
     }

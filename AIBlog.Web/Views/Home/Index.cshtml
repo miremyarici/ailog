@@ -45,28 +45,24 @@
     <section class="authors-section-wrapper">
         <h3 class="section-title">Recommended Authors</h3>
         <div class="authors-section">
-            @{
-                var authorImages = new[] { 
-                    "https://i.pravatar.cc/100?img=1",
-                    "https://i.pravatar.cc/100?img=2", 
-                    "https://i.pravatar.cc/100?img=3",
-                    "https://i.pravatar.cc/100?img=4",
-                    "https://i.pravatar.cc/100?img=6"
-                };
-                var index = 0;
-            }
             @foreach (var author in Model.RecommendedAuthors)
             {
                 <div class="author-item">
                     <div class="author-info">
                         <div class="author-avatar">
-                            <img src="@authorImages[index % authorImages.Length]" alt="@author.Name" />
+                            @if (!string.IsNullOrEmpty(author.Avatar))
+                            {
+                                <img src="@author.Avatar" alt="@author.Name" />
+                            }
+                            else
+                            {
+                                <span>@author.Name?.Substring(0, 1).ToUpper()</span>
+                            }
                         </div>
                         <span class="author-name">@author.Name</span>
                     </div>
                     <button class="follow-btn">Follow</button>
                 </div>
-                index++;
             }
         </div>
     </section>

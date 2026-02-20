@@ -3,9 +3,13 @@ namespace AIBlog.Web.Models;
 public class ArchiveViewModel
 {
     public List<BlogPost> ReadBlogs { get; set; } = new();
+    public List<BlogPost> DraftBlogs { get; set; } = new();
     public List<Category> Categories { get; set; } = new();
     public string CurrentUserName { get; set; } = "Diane Merlotte";
     public string? CurrentUserAvatar { get; set; }
+    
+    // Active tab: "read" or "drafts"
+    public string ActiveTab { get; set; } = "read";
     
     // Filter parameters
     public string? SearchQuery { get; set; }

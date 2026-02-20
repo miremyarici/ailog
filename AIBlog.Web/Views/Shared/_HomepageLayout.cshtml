@@ -69,6 +69,17 @@
                             <span>Explore</span>
                         </a>
                     </li>
+                    <!-- <li>
+                        <a href="/Home/Profile" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Profile" ? "active" : "")">
+                            <span class="nav-icon">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </span>
+                            <span>Profile</span>
+                        </a>
+                    </li> -->
                     <li>
                         <a href="/Home/Settings" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")">
                             <span class="nav-icon">
@@ -89,7 +100,14 @@
             <div class="user-profile" id="userProfileBtn">
                 <span class="user-name">Diane Merlotte</span>
                 <div class="user-avatar">
-                    <img src="https://i.pravatar.cc/100?img=5" alt="Diane Merlotte" />
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentUserAvatar as string))
+                    {
+                        <img src="@ViewBag.CurrentUserAvatar" alt="Diane Merlotte" />
+                    }
+                    else
+                    {
+                        <span>D</span>
+                    }
                 </div>
                 <span class="dropdown-arrow">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

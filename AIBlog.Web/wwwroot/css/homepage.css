@@ -523,6 +523,9 @@ body.homepage-body {
 .author-avatar {
     width: 32px;
     height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    flex-shrink: 0;
     border-radius: 50%;
     background: var(--accent-color);
     display: flex;
@@ -535,9 +538,10 @@ body.homepage-body {
 }
 
 .author-avatar img {
-    width: 100%;
-    height: 100%;
+    width: 32px;
+    height: 32px;
     object-fit: cover;
+    border-radius: 50%;
 }
 
 .author-name {
@@ -1632,4 +1636,292 @@ body.homepage-body {
 
 .fab-button svg {
     stroke-width: 2.5;
+}
+
+/* ========================================
+   Archive Tabs
+   ======================================== */
+
+.archive-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 8px;
+}
+
+.archive-tab {
+    background: none;
+    border: none;
+    padding: 12px 24px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.archive-tab:hover {
+    color: var(--text-primary);
+}
+
+.archive-tab.active {
+    color: var(--text-heading);
+    font-weight: 600;
+}
+
+.archive-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent-color);
+    border-radius: 1px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.draft-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.draft-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* ========================================
+   Profile Page Styles
+   ======================================== */
+
+/* Profile Header */
+.profile-header {
+    margin-bottom: 32px;
+}
+
+.profile-cover {
+    width: 100%;
+    height: 200px;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+}
+
+.cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cover-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--accent-color) 0%, var(--bg-sidebar) 50%, var(--button-bg) 100%);
+}
+
+/* Profile Info Section */
+.profile-info-section {
+    display: flex;
+    gap: 24px;
+    padding: 0 16px;
+    margin-top: -40px;
+    position: relative;
+    z-index: 10;
+}
+
+.profile-avatar-wrapper {
+    flex-shrink: 0;
+}
+
+.profile-avatar-large {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    border: 4px solid var(--bg-primary);
+    object-fit: cover;
+    box-shadow: var(--shadow-soft);
+}
+
+.profile-avatar-placeholder {
+    background: var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: 600;
+    font-family: var(--font-heading);
+}
+
+.profile-details {
+    flex: 1;
+    padding-top: 48px;
+}
+
+.profile-name-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.profile-name {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    color: var(--text-heading);
+    font-weight: 600;
+    margin: 0;
+}
+
+.edit-profile-btn {
+    background: var(--button-bg);
+    color: var(--button-text);
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font-body);
+}
+
+.edit-profile-btn:hover {
+    background: var(--accent-color);
+    color: white;
+}
+
+.profile-bio {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 12px;
+    max-width: 500px;
+}
+
+.profile-bio-empty {
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+.profile-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.profile-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.profile-meta-item svg {
+    opacity: 0.7;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 28px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.stat-number {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Profile Posts Section */
+.profile-posts-section {
+    margin-top: 8px;
+}
+
+.profile-section-title {
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    color: var(--text-heading);
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+/* Profile Responsive */
+@media (max-width: 900px) {
+    .profile-cover {
+        height: 150px;
+    }
+
+    .profile-info-section {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+    }
+
+    .profile-details {
+        padding-top: 8px;
+    }
+
+    .profile-name-row {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .profile-stats {
+        justify-content: center;
+    }
+
+    .profile-bio {
+        max-width: 100%;
+    }
+
+    .profile-meta {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .profile-avatar-large {
+        width: 72px;
+        height: 72px;
+    }
+
+    .profile-cover {
+        height: 120px;
+        border-radius: 12px;
+    }
+
+    .profile-stats {
+        gap: 20px;
+    }
 }
