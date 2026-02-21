@@ -1,0 +1,162 @@
+/* ========================================
+   Auth Pages (Login / Register)
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body.auth-body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f0f8;
+    font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 460px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.auth-logo {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #3d3350;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+}
+
+.auth-card {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.45);
+    border: 1px solid #e0d6e8;
+    border-radius: 20px;
+    padding: 36px 32px;
+    margin-bottom: 40px;
+}
+
+.auth-field {
+    margin-bottom: 0;
+}
+
+.auth-field input {
+    width: 100%;
+    padding: 16px 0;
+    border: none;
+    border-bottom: 1px solid #d4c4e0;
+    background: transparent;
+    font-size: 0.95rem;
+    font-family: 'Source Sans Pro', sans-serif;
+    color: #4a3f5c;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.auth-field input::placeholder {
+    color: #a89ab8;
+}
+
+.auth-field input:focus {
+    border-bottom-color: #8b7aa0;
+}
+
+.auth-field:last-child input {
+    border-bottom: none;
+}
+
+/* Error message */
+.auth-error {
+    background: rgba(180, 80, 80, 0.1);
+    color: #a05050;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.auth-success {
+    background: rgba(80, 160, 80, 0.1);
+    color: #508050;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Bottom section */
+.auth-bottom {
+    text-align: center;
+}
+
+.auth-bottom-text {
+    font-size: 0.9rem;
+    color: #8a7a9a;
+    margin-bottom: 14px;
+}
+
+.auth-submit-btn {
+    display: inline-block;
+    padding: 12px 48px;
+    background: #8b7aa0;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: 'Source Sans Pro', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.auth-submit-btn:hover {
+    background: #3d3350;
+    transform: translateY(-1px);
+}
+
+.auth-link-btn {
+    display: inline-block;
+    padding: 12px 48px;
+    background: #a89ab8;
+    color: white;
+    border: none;
+    border-radius: 24px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: 'Source Sans Pro', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.auth-link-btn:hover {
+    background: #3d3350;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 520px) {
+    .auth-container {
+        padding: 16px;
+    }
+
+    .auth-card {
+        padding: 28px 20px;
+    }
+
+    .auth-logo {
+        font-size: 2.4rem;
+    }
+}

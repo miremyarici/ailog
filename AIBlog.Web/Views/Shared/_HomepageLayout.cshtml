@@ -98,15 +98,15 @@
         <!-- Top Bar (Sabit - Tüm Sayfalarda Ortak) -->
         <header class="top-bar">
             <div class="user-profile" id="userProfileBtn">
-                <span class="user-name">Diane Merlotte</span>
+                <span class="user-name">@ViewBag.CurrentUserName</span>
                 <div class="user-avatar">
                     @if (!string.IsNullOrEmpty(ViewBag.CurrentUserAvatar as string))
                     {
-                        <img src="@ViewBag.CurrentUserAvatar" alt="Diane Merlotte" />
+                        <img src="@ViewBag.CurrentUserAvatar" alt="@ViewBag.CurrentUserName" />
                     }
                     else
                     {
-                        <span>D</span>
+                        <span>@(ViewBag.CurrentUserName?.ToString()?.Substring(0, 1).ToUpper() ?? "U")</span>
                     }
                 </div>
                 <span class="dropdown-arrow">
@@ -123,13 +123,6 @@
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
                         Profile
-                    </a>
-                    <a href="/Home/Settings" class="dropdown-item">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                        </svg>
-                        Settings
                     </a>
                     <a href="/Home/Help" class="dropdown-item">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -162,6 +155,19 @@
                 <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
         </a>
+
+        <!-- Followers/Following Popup Modal -->
+        <div class="followers-modal-overlay" id="followersModalOverlay" onclick="closeFollowersPopup()">
+            <div class="followers-modal" onclick="event.stopPropagation()">
+                <div class="followers-modal-header">
+                    <h3 class="followers-modal-title" id="followersModalTitle">Followers</h3>
+                    <button class="followers-modal-close" onclick="closeFollowersPopup()">&times;</button>
+                </div>
+                <div class="followers-modal-body" id="followersModalBody">
+                    <div class="followers-loading">Loading...</div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -186,5 +192,41 @@
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        function openFollowersPopup(authorId, type) {
+            const overlay = document.getElementById('followersModalOverlay');
+            const title = document.getElementById('followersModalTitle');
+            const body = document.getElementById('followersModalBody');
+
+            title.textContent = type === 'followers' ? 'Followers' : 'Following';
+            body.innerHTML = '<div class="followers-loading">Loading...</div>';
+            overlay.classList.add('active');
+
+            fetch('/Home/GetFollowersList?authorId=' + authorId + '&type=' + type)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.users.length > 0) {
+                        body.innerHTML = data.users.map(u => `
+                            <a href="/Home/AuthorProfile/${u.id}" class="followers-user-item">
+                                <div class="followers-user-avatar">
+                                    ${u.avatar ? '<img src="' + u.avatar + '" alt="' + u.name + '" />' : '<span>' + u.name.charAt(0).toUpperCase() + '</span>'}
+                                </div>
+                                <span class="followers-user-name">${u.name}</span>
+                            </a>
+                        `).join('');
+                    } else {
+                        body.innerHTML = '<div class="followers-empty">No ' + type + ' yet.</div>';
+                    }
+                })
+                .catch(() => {
+                    body.innerHTML = '<div class="followers-empty">Failed to load.</div>';
+                });
+        }
+
+        function closeFollowersPopup() {
+            document.getElementById('followersModalOverlay').classList.remove('active');
+        }
+    </script>
 </body>
 </html>

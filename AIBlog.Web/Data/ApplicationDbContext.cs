@@ -16,6 +16,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<ReadHistory> ReadHistories { get; set; }
     public DbSet<AuthorInterest> AuthorInterests { get; set; }
 
+    public DbSet<Comment> Comments { get; set; }
+    public DbSet<Follow> Follows { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -79,6 +82,47 @@ public class ApplicationDbContext : DbContext
             entity.HasOne(e => e.Category)
                   .WithMany()
                   .HasForeignKey(e => e.CategoryId);
+        });
+
+        // Comment configuration
+        modelBuilder.Entity<Comment>(entity =>
+        {
+            entity.ToTable("Comments");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Content).IsRequired();
+
+            entity.HasOne(e => e.BlogPost)
+                  .WithMany()
+                  .HasForeignKey(e => e.BlogPostId);
+
+            entity.HasOne(e => e.Author)
+                  .WithMany()
+                  .HasForeignKey(e => e.AuthorId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(e => e.ParentComment)
+                  .WithMany(e => e.Replies)
+                  .HasForeignKey(e => e.ParentCommentId)
+                  .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        // Follow configuration
+        modelBuilder.Entity<Follow>(entity =>
+        {
+            entity.ToTable("Follows");
+            entity.HasKey(e => e.Id);
+
+            entity.HasOne(e => e.Follower)
+                  .WithMany()
+                  .HasForeignKey(e => e.FollowerId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(e => e.Following)
+                  .WithMany()
+                  .HasForeignKey(e => e.FollowingId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasIndex(e => new { e.FollowerId, e.FollowingId }).IsUnique();
         });
     }
 }

@@ -1,0 +1,46 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - AI Blog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-logo">ailog</div>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="auth-error">@TempData["Error"]</div>
+        }
+        @if (TempData["Success"] != null)
+        {
+            <div class="auth-success">@TempData["Success"]</div>
+        }
+
+        <form method="post" asp-controller="Account" asp-action="Login">
+            <div class="auth-card">
+                <div class="auth-field">
+                    <input type="text" name="emailOrPhone" placeholder="E-Mail or Phone Number" required />
+                </div>
+                <div class="auth-field">
+                    <input type="password" name="password" placeholder="Password" required />
+                </div>
+            </div>
+
+            <div class="auth-bottom">
+                <button type="submit" class="auth-submit-btn">Log In</button>
+                <p class="auth-bottom-text" style="margin-top: 28px;">Don't have an account?</p>
+                <a href="/Account/Register" class="auth-link-btn">Sign Up</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

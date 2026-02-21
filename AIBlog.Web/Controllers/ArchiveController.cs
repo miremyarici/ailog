@@ -15,6 +15,25 @@ public class ArchiveController : Controller
         _context = context;
     }
 
+    private int GetCurrentUserId()
+    {
+        return HttpContext.Session.GetInt32("UserId") ?? 0;
+    }
+
+    public override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)
+    {
+        base.OnActionExecuting(context);
+        var userId = HttpContext.Session.GetInt32("UserId");
+        if (userId == null)
+        {
+            context.Result = new RedirectToActionResult("Login", "Account", null);
+            return;
+        }
+        var author = _context.Authors.FirstOrDefault(a => a.Id == userId.Value);
+        ViewBag.CurrentUserAvatar = author?.Avatar;
+        ViewBag.CurrentUserName = author?.Name ?? "User";
+    }
+
     public async Task<IActionResult> Index(
         string? search,
         string? timePeriod,
@@ -31,7 +50,7 @@ public class ArchiveController : Controller
                 .ThenInclude(b => b!.Author)
             .Include(r => r.BlogPost)
                 .ThenInclude(b => b!.Category)
-            .Where(r => r.UserId == 1 && r.BlogPost != null)
+            .Where(r => r.UserId == GetCurrentUserId() && r.BlogPost != null)
             .Select(r => r.BlogPost!);
 
         // Apply search filter
@@ -81,7 +100,7 @@ public class ArchiveController : Controller
         {
             ReadBlogs = blogs,
             Categories = categories,
-            CurrentUserName = "Diane Merlotte",
+            CurrentUserName = HttpContext.Session.GetString("UserName") ?? "User",
             SearchQuery = search,
             TimePeriod = timePeriod,
             CategoryId = categoryId,
@@ -105,7 +124,7 @@ public class ArchiveController : Controller
         var query = _context.ReadHistories
             .Include(r => r.BlogPost)
                 .ThenInclude(b => b!.Author)
-            .Where(r => r.UserId == 1 && r.BlogPost != null)
+            .Where(r => r.UserId == GetCurrentUserId() && r.BlogPost != null)
             .Select(r => r.BlogPost!);
 
         // Apply same filters

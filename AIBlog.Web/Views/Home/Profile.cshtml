@@ -12,12 +12,20 @@
         <div class="profile-cover">
             @if (!string.IsNullOrEmpty(Model.Author.CoverPhoto))
             {
-                <img src="@Model.Author.CoverPhoto" alt="Cover Photo" class="cover-image" />
+                <img src="@Model.Author.CoverPhoto" alt="Cover Photo" class="cover-image" id="coverImage" />
             }
             else
             {
-                <div class="cover-placeholder"></div>
+                <div class="cover-placeholder" id="coverPlaceholder"></div>
             }
+            <!-- Edit mode: pencil icon overlay -->
+            <button class="cover-edit-icon edit-icon-btn" id="coverEditBtn" title="Change cover photo">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+            </button>
+            <input type="file" id="coverFileInput" accept="image/*" style="display:none;" />
         </div>
 
         <!-- Profile Info -->
@@ -25,30 +33,61 @@
             <div class="profile-avatar-wrapper">
                 @if (!string.IsNullOrEmpty(Model.Author.Avatar))
                 {
-                    <img src="@Model.Author.Avatar" alt="@Model.Author.Name" class="profile-avatar-large" />
+                    <img src="@Model.Author.Avatar" alt="@Model.Author.Name" class="profile-avatar-large" id="avatarImage" />
                 }
                 else
                 {
-                    <div class="profile-avatar-large profile-avatar-placeholder">
+                    <div class="profile-avatar-large profile-avatar-placeholder" id="avatarPlaceholder">
                         <span>@Model.Author.Name?.Substring(0, 1).ToUpper()</span>
                     </div>
                 }
+                <!-- Edit mode: pencil icon overlay -->
+                <button class="avatar-edit-icon edit-icon-btn" id="avatarEditBtn" title="Change profile photo">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                </button>
+                <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" />
             </div>
 
             <div class="profile-details">
                 <div class="profile-name-row">
                     <h1 class="profile-name">@Model.Author.Name</h1>
-                    <button class="edit-profile-btn" id="editProfileBtn" onclick="alert('Edit Profile feature coming soon!')">Edit Profile</button>
+                    <button class="edit-profile-btn" id="editProfileBtn" onclick="toggleEditMode()">Edit Profile</button>
+                    <div class="profile-edit-actions" id="profileEditActions">
+                        <button class="cancel-profile-btn" id="cancelEditBtn" onclick="cancelEditMode()">Cancel</button>
+                        <button class="save-profile-btn" id="saveEditBtn" onclick="saveProfile()">Save</button>
+                    </div>
                 </div>
 
-                @if (!string.IsNullOrEmpty(Model.Author.Bio))
-                {
-                    <p class="profile-bio">@Model.Author.Bio</p>
-                }
-                else
-                {
-                    <p class="profile-bio profile-bio-empty">No bio yet.</p>
-                }
+                <div class="profile-bio-wrapper">
+                    @if (!string.IsNullOrEmpty(Model.Author.Bio))
+                    {
+                        <p class="profile-bio" id="profileBioDisplay">
+                            <span id="profileBioText">@Model.Author.Bio</span>
+                            <button class="bio-edit-icon edit-icon-btn" id="bioEditBtn" title="Edit bio">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="profile-bio profile-bio-empty" id="profileBioDisplay">
+                            <span id="profileBioText">No bio yet.</span>
+                            <button class="bio-edit-icon edit-icon-btn" id="bioEditBtn" title="Edit bio">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                            </button>
+                        </p>
+                    }
+                    <textarea class="profile-bio-textarea" id="profileBioTextarea" style="display:none;" placeholder="Write your bio..."></textarea>
+                </div>
 
                 <div class="profile-meta">
                     <span class="profile-meta-item">
@@ -58,16 +97,16 @@
                             <line x1="8" y1="2" x2="8" y2="6"/>
                             <line x1="3" y1="10" x2="21" y2="10"/>
                         </svg>
-                        Joined @Model.Author.CreatedAt.ToString("MMMM yyyy")
+                        Joined @Model.Author.CreatedAt.ToString("MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture)
                     </span>
                 </div>
 
                 <div class="profile-stats">
-                    <div class="stat-item">
+                    <div class="stat-item stat-clickable" onclick="openFollowersPopup(@Model.Author.Id, 'followers')">
                         <span class="stat-number">@Model.Author.FollowersCount</span>
                         <span class="stat-label">Followers</span>
                     </div>
-                    <div class="stat-item">
+                    <div class="stat-item stat-clickable" onclick="openFollowersPopup(@Model.Author.Id, 'following')">
                         <span class="stat-number">@Model.Author.FollowingCount</span>
                         <span class="stat-label">Following</span>
                     </div>
@@ -92,7 +131,7 @@
                     <h2 class="blog-title">@blog.Title</h2>
                     <p class="blog-author">@blog.Author?.Name</p>
                     <p class="blog-summary">@blog.DisplaySummary</p>
-                    <a href="#" class="read-more-btn">Read More</a>
+                    <a href="/Home/BlogDetail/@blog.Id" class="read-more-btn">Read More</a>
                 </article>
             }
         }
@@ -117,7 +156,7 @@
             <div class="most-read-card">
                 <h4 class="most-read-title">@blog.Title</h4>
                 <p class="most-read-author">@blog.Author?.Name</p>
-                <a href="#" class="click-to-read">Read More</a>
+                <a href="/Home/BlogDetail/@blog.Id" class="click-to-read">Read More</a>
             </div>
         }
     </section>
@@ -148,3 +187,7 @@
         </div>
     </section>
 </aside>
+
+@section Scripts {
+    <script src="~/js/profile.js"></script>
+}

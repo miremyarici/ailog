@@ -1,0 +1,49 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Email - AI Blog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-logo">ailog</div>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="auth-error">@TempData["Error"]</div>
+        }
+
+        <p style="color: #8a7a9a; font-size: 0.9rem; text-align: center; margin-bottom: 24px;">
+            We sent a verification code to<br />
+            <strong style="color: #4a3f5c;">@ViewBag.Email</strong>
+        </p>
+
+        <form method="post" asp-controller="Account" asp-action="VerifyEmail">
+            <div class="auth-card">
+                <div class="auth-field">
+                    <input type="text" name="code" placeholder="Verification Code" 
+                           maxlength="6" pattern="[0-9]{6}" 
+                           style="text-align: center; font-size: 1.4rem; letter-spacing: 8px; font-weight: 600;"
+                           required autofocus />
+                </div>
+            </div>
+
+            <div class="auth-bottom">
+                <button type="submit" class="auth-submit-btn">Verify</button>
+                <p class="auth-bottom-text" style="margin-top: 20px;">
+                    Didn't receive the code?
+                </p>
+                <a href="/Account/ResendCode" class="auth-link-btn" style="font-size: 0.8rem; padding: 10px 32px;">Resend Code</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

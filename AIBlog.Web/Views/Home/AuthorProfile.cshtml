@@ -1,0 +1,189 @@
+@model AIBlog.Web.Models.AuthorProfileViewModel
+@{
+    Layout = "_HomepageLayout";
+    ViewData["Title"] = Model.Author.Name + " - Profile";
+}
+
+<!-- Main Content -->
+<main class="main-content" id="profileContainer">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <!-- Cover Photo -->
+        <div class="profile-cover">
+            @if (!string.IsNullOrEmpty(Model.Author.CoverPhoto))
+            {
+                <img src="@Model.Author.CoverPhoto" alt="Cover Photo" class="cover-image" />
+            }
+            else
+            {
+                <div class="cover-placeholder"></div>
+            }
+        </div>
+
+        <!-- Profile Info -->
+        <div class="profile-info-section">
+            <div class="profile-avatar-wrapper">
+                @if (!string.IsNullOrEmpty(Model.Author.Avatar))
+                {
+                    <img src="@Model.Author.Avatar" alt="@Model.Author.Name" class="profile-avatar-large" />
+                }
+                else
+                {
+                    <div class="profile-avatar-large profile-avatar-placeholder">
+                        <span>@Model.Author.Name?.Substring(0, 1).ToUpper()</span>
+                    </div>
+                }
+            </div>
+
+            <div class="profile-details">
+                <div class="profile-name-row">
+                    <h1 class="profile-name">@Model.Author.Name</h1>
+                    @if (!Model.IsOwnProfile)
+                    {
+                        <button class="follow-profile-btn @(Model.IsFollowing ? "following" : "")" 
+                                id="followProfileBtn" 
+                                data-author-id="@Model.Author.Id"
+                                onclick="toggleFollowProfile(this)">
+                            @(Model.IsFollowing ? "Unfollow" : "Follow")
+                        </button>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Profile", "Home")" class="edit-profile-btn">Edit Profile</a>
+                    }
+                </div>
+
+                <div class="profile-bio-wrapper">
+                    @if (!string.IsNullOrEmpty(Model.Author.Bio))
+                    {
+                        <p class="profile-bio">@Model.Author.Bio</p>
+                    }
+                    else
+                    {
+                        <p class="profile-bio profile-bio-empty">No bio yet.</p>
+                    }
+                </div>
+
+                <div class="profile-meta">
+                    <span class="profile-meta-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        Joined @Model.Author.CreatedAt.ToString("MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture)
+                    </span>
+                </div>
+
+                <div class="profile-stats">
+                    <div class="stat-item stat-clickable" onclick="openFollowersPopup(@Model.Author.Id, 'followers')">
+                        <span class="stat-number" id="followersCount">@Model.Author.FollowersCount</span>
+                        <span class="stat-label">Followers</span>
+                    </div>
+                    <div class="stat-item stat-clickable" onclick="openFollowersPopup(@Model.Author.Id, 'following')">
+                        <span class="stat-number">@Model.Author.FollowingCount</span>
+                        <span class="stat-label">Following</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">@Model.UserPosts.Count</span>
+                        <span class="stat-label">Posts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User's Posts -->
+    <div class="profile-posts-section">
+        <h2 class="profile-section-title">Published Posts</h2>
+
+        @if (Model.UserPosts.Any())
+        {
+            @foreach (var blog in Model.UserPosts)
+            {
+                <article class="blog-card" data-blog-id="@blog.Id">
+                    <h2 class="blog-title">@blog.Title</h2>
+                    <p class="blog-author">@blog.Author?.Name</p>
+                    <p class="blog-summary">@blog.DisplaySummary</p>
+                    <a href="/Home/BlogDetail/@blog.Id" class="read-more-btn">Read More</a>
+                </article>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <h2>No posts yet</h2>
+                <p>This author hasn't published any posts.</p>
+            </div>
+        }
+    </div>
+</main>
+
+<!-- Right Sidebar -->
+<aside class="right-sidebar">
+    <!-- This Week's Most Read -->
+    <section class="most-read-section">
+        <h3 class="section-title">This Week's Most Read</h3>
+        @foreach (var blog in Model.MostReadBlogs)
+        {
+            <div class="most-read-card">
+                <h4 class="most-read-title">@blog.Title</h4>
+                <p class="most-read-author"><a href="/Home/AuthorProfile/@blog.AuthorId" style="color: inherit; text-decoration: none;">@blog.Author?.Name</a></p>
+                <a href="/Home/BlogDetail/@blog.Id" class="click-to-read">Read More</a>
+            </div>
+        }
+    </section>
+
+    <!-- Recommended Authors -->
+    <section class="authors-section-wrapper">
+        <h3 class="section-title">Recommended Authors</h3>
+        <div class="authors-section">
+            @foreach (var author in Model.RecommendedAuthors)
+            {
+                <div class="author-item">
+                    <div class="author-info">
+                        <div class="author-avatar">
+                            @if (!string.IsNullOrEmpty(author.Avatar))
+                            {
+                                <img src="@author.Avatar" alt="@author.Name" />
+                            }
+                            else
+                            {
+                                <span>@author.Name?.Substring(0, 1).ToUpper()</span>
+                            }
+                        </div>
+                        <span class="author-name"><a href="/Home/AuthorProfile/@author.Id" style="color: inherit; text-decoration: none;">@author.Name</a></span>
+                    </div>
+                    <button class="follow-btn">Follow</button>
+                </div>
+            }
+        </div>
+    </section>
+</aside>
+
+@section Scripts {
+    <script>
+        function toggleFollowProfile(btn) {
+            var authorId = btn.getAttribute('data-author-id');
+            $.ajax({
+                url: '/Home/ToggleFollow',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ authorId: parseInt(authorId) }),
+                success: function(response) {
+                    if (response.success) {
+                        if (response.isFollowing) {
+                            btn.textContent = 'Unfollow';
+                            btn.classList.add('following');
+                        } else {
+                            btn.textContent = 'Follow';
+                            btn.classList.remove('following');
+                        }
+                        document.getElementById('followersCount').textContent = response.followersCount;
+                    }
+                }
+            });
+        }
+    </script>
+}
