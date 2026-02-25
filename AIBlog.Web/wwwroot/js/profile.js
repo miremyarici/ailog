@@ -99,7 +99,7 @@ function saveProfile() {
     saveBtn.textContent = 'Saving...';
 
     $.ajax({
-        url: '/Home/UpdateProfile',
+        url: '/Profile/UpdateProfile',
         type: 'POST',
         data: formData,
         processData: false,

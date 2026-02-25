@@ -131,7 +131,7 @@
                     <h2 class="blog-title">@blog.Title</h2>
                     <p class="blog-author">@blog.Author?.Name</p>
                     <p class="blog-summary">@blog.DisplaySummary</p>
-                    <a href="/Home/BlogDetail/@blog.Id" class="read-more-btn">Read More</a>
+                    <a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@blog.Id" class="read-more-btn">Read More</a>
                 </article>
             }
         }
@@ -140,53 +140,16 @@
             <div class="empty-state">
                 <h2>No posts yet</h2>
                 <p>Start writing your first blog post!</p>
-                <a href="@Url.Action("Write", "Home")" class="read-more-btn" style="margin-top: 16px;">Write a Post</a>
+                <a asp-controller="Blog" asp-action="Write" class="read-more-btn" style="margin-top: 16px;">Write a Post</a>
             </div>
         }
     </div>
 </main>
 
-<!-- Right Sidebar -->
 <aside class="right-sidebar">
-    <!-- This Week's Most Read -->
-    <section class="most-read-section">
-        <h3 class="section-title">This Week's Most Read</h3>
-        @foreach (var blog in Model.MostReadBlogs)
-        {
-            <div class="most-read-card">
-                <h4 class="most-read-title">@blog.Title</h4>
-                <p class="most-read-author">@blog.Author?.Name</p>
-                <a href="/Home/BlogDetail/@blog.Id" class="click-to-read">Read More</a>
-            </div>
-        }
-    </section>
-
-    <!-- Recommended Authors -->
-    <section class="authors-section-wrapper">
-        <h3 class="section-title">Recommended Authors</h3>
-        <div class="authors-section">
-            @foreach (var author in Model.RecommendedAuthors)
-            {
-                <div class="author-item">
-                    <div class="author-info">
-                        <div class="author-avatar">
-                            @if (!string.IsNullOrEmpty(author.Avatar))
-                            {
-                                <img src="@author.Avatar" alt="@author.Name" />
-                            }
-                            else
-                            {
-                                <span>@author.Name?.Substring(0, 1).ToUpper()</span>
-                            }
-                        </div>
-                        <span class="author-name">@author.Name</span>
-                    </div>
-                    <button class="follow-btn">Follow</button>
-                </div>
-            }
-        </div>
-    </section>
-</aside>
+    <partial name="_MostReadSidebar" model="Model.MostReadBlogs" />
+    <partial name="_RecommendedAuthorsSidebar" model="Model.RecommendedAuthors" />
+</aside>    
 
 @section Scripts {
     <script src="~/js/profile.js"></script>

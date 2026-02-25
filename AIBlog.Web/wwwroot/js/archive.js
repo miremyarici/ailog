@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (currentFilters.sortBy) params.set('sortBy', currentFilters.sortBy);
         if (currentFilters.tab) params.set('tab', currentFilters.tab);
 
-        window.location.href = '/Home/Archive?' + params.toString();
+        window.location.href = '/Blog/Archive?' + params.toString();
     }
 
     // Load more functionality
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (currentFilters.categoryId) params.set('categoryId', currentFilters.categoryId);
             if (currentFilters.sortBy) params.set('sortBy', currentFilters.sortBy);
 
-            fetch('/Home/LoadMoreArchive?' + params.toString())
+            fetch('/Blog/LoadMoreArchive?' + params.toString())
                 .then(response => response.json())
                 .then(data => {
                     const container = document.getElementById('blogContainer');
@@ -292,9 +292,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         article.dataset.blogId = post.id;
                         article.innerHTML = `
                             <h2 class="blog-title">${post.title}</h2>
-                            <p class="blog-author"><a href="/Home/AuthorProfile/${post.authorId}" style="color: inherit; text-decoration: none;">${post.authorName}</a></p>
+                            <p class="blog-author"><a href="/Profile/AuthorProfile/${post.authorId}" style="color: inherit; text-decoration: none;">${post.authorName}</a></p>
                             <p class="blog-summary">${post.summary}</p>
-                            <a href="/Home/BlogDetail/${post.id}" class="read-more-btn">Continue Reading</a>
+                            <a href="/Blog/BlogDetail/${post.id}" class="read-more-btn">Continue Reading</a>
                         `;
                         container.insertBefore(article, loadMoreContainer);
                     });

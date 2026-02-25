@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AIBlog.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+76c9342b073b831f18537d4c2a1a2c6ac4c4b683")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cf243665119f82a41f694701fbcecfafd8cb5306")]
 [assembly: System.Reflection.AssemblyProductAttribute("AIBlog.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AIBlog.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

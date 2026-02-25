@@ -8,7 +8,7 @@ $(document).ready(function () {
         var blogPostId = $(this).data('post-id');
 
         $.ajax({
-            url: '/Home/AddComment',
+            url: '/Blog/AddComment',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
@@ -60,7 +60,7 @@ $(document).ready(function () {
         var blogPostId = form.data('post-id');
 
         $.ajax({
-            url: '/Home/AddComment',
+            url: '/Blog/AddComment',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({

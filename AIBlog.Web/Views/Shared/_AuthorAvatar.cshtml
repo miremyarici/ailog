@@ -1,0 +1,12 @@
+@model AIBlog.Web.Models.Author
+
+<div class="author-avatar">
+    @if (!string.IsNullOrEmpty(Model?.Avatar))
+    {
+        <img src="@Model.Avatar" alt="@Model.Name" />
+    }
+    else
+    {
+        <span>@(Model?.Name?.Substring(0, 1).ToUpper() ?? "U")</span>
+    }
+</div>

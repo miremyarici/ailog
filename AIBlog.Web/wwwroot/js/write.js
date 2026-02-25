@@ -539,7 +539,7 @@ document.addEventListener('DOMContentLoaded', function () {
             payload.id = parseInt(editingPostId);
         }
 
-        fetch('/Home/SaveBlog', {
+        fetch('/Blog/SaveBlog', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -549,10 +549,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     if (isPublished) {
                         alert('Your post has been published!');
-                        window.location.href = '/Home/Profile';
+                        window.location.href = '/Profile/Profile';
                     } else {
                         alert('Your draft has been saved!');
-                        window.location.href = '/Home/Archive?tab=drafts';
+                        window.location.href = '/Blog/Archive?tab=drafts';
                     }
                 } else {
                     alert('Error: ' + (data.error || 'Something went wrong.'));

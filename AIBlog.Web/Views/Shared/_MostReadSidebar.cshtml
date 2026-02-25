@@ -1,0 +1,24 @@
+@model IEnumerable<AIBlog.Web.Models.BlogPost>
+
+<section class="most-read-section">
+    <h3 class="section-title">This Week's Most Read</h3>
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var blog in Model)
+        {
+            <div class="most-read-card">
+                <h4 class="most-read-title">@blog.Title</h4>
+                <p class="most-read-author">
+                    <a asp-controller="Profile" asp-action="AuthorProfile" asp-route-id="@blog.AuthorId" style="color: inherit; text-decoration: none;">
+                        @(blog.Author?.Name ?? "Unknown")
+                    </a>
+                </p>
+                <a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@blog.Id" class="click-to-read">Read More</a>
+            </div>
+        }
+    }
+    else
+    {
+        <p style="color: #8a7a9a; font-size: 0.9rem;">No reading data yet.</p>
+    }
+</section>

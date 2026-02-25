@@ -5,7 +5,7 @@ public class ArchiveViewModel
     public List<BlogPost> ReadBlogs { get; set; } = new();
     public List<BlogPost> DraftBlogs { get; set; } = new();
     public List<Category> Categories { get; set; } = new();
-    public string CurrentUserName { get; set; } = "Diane Merlotte";
+    public string CurrentUserName { get; set; } = string.Empty;
     public string? CurrentUserAvatar { get; set; }
     
     // Active tab: "read" or "drafts"

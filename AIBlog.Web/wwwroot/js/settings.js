@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ========================================
     async function apiCall(endpoint, data) {
         try {
-            const response = await fetch(`/Home/${endpoint}`, {
+            const response = await fetch(`/Settings/${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)

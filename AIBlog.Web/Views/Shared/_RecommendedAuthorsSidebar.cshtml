@@ -1,0 +1,26 @@
+@model IEnumerable<AIBlog.Web.Models.Author>
+
+<section class="authors-section-wrapper">
+    <h3 class="section-title">Recommended Authors</h3>
+    <div class="authors-section">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var author in Model)
+            {
+                <div class="author-item" data-author-id="@author.Id">
+                    <a asp-controller="Profile" asp-action="AuthorProfile" asp-route-id="@author.Id" class="author-info" style="text-decoration: none; color: inherit;">
+                        
+                        <partial name="_AuthorAvatar" model="author" />
+                        
+                        <span class="author-name">@author.Name</span>
+                    </a>
+                    <button class="follow-btn" data-author-id="@author.Id">Follow</button>
+                </div>
+            }
+        }
+        else
+        {
+            <p style="color: #8a7a9a; font-size: 0.9rem;">No recommendations available.</p>
+        }
+    </div>
+</section>

@@ -20,9 +20,9 @@
             {
                 <article class="blog-card" data-blog-id="@blog.Id">
                     <h2 class="blog-title">@blog.Title</h2>
-                    <p class="blog-author"><a href="/Home/AuthorProfile/@blog.AuthorId" style="color: inherit; text-decoration: none;">@blog.Author?.Name</a></p>
+                    <p class="blog-author"><a asp-controller="Profile" asp-action="AuthorProfile" asp-route-id="@blog.AuthorId" style="color: inherit; text-decoration: none;">@blog.Author?.Name</a></p>
                     <p class="blog-summary">@blog.DisplaySummary</p>
-                    <a href="/Home/BlogDetail/@blog.Id" class="read-more-btn">Continue Reading</a>
+                    <a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@blog.Id" class="read-more-btn">Continue Reading</a>
                 </article>
             }
 
@@ -40,7 +40,7 @@
             <div class="empty-state">
                 <h2>No read history yet</h2>
                 <p>Start reading articles to build your archive!</p>
-                <a href="/" class="read-more-btn">Browse Articles</a>
+                <a asp-controller="Home" asp-action="Index" class="read-more-btn">Browse Articles</a>
             </div>
         }
     </div>
@@ -57,7 +57,7 @@
                     <p class="blog-summary">@blog.DisplaySummary</p>
                     <div class="draft-meta">
                         <span class="draft-date">Saved @blog.CreatedAt.ToString("dd MMM yyyy")</span>
-                        <a href="/Home/Write?id=@blog.Id" class="read-more-btn">Edit</a>
+                        <a asp-controller="Blog" asp-action="Write" asp-route-id="@blog.Id" class="read-more-btn">Edit</a>
                     </div>
                 </article>
             }
@@ -67,7 +67,7 @@
             <div class="empty-state">
                 <h2>No drafts yet</h2>
                 <p>Your saved but unpublished posts will appear here.</p>
-                <a href="@Url.Action("Write", "Home")" class="read-more-btn">Write a Post</a>
+                <a asp-controller="Blog" asp-action="Write" class="read-more-btn">Write a Post</a>
             </div>
         }
     </div>

@@ -27,7 +27,12 @@ public class BlogPost
     {
         if (string.IsNullOrEmpty(content)) return string.Empty;
         
-        var words = content.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        // Remove HTML tags using Regex
+        var plainText = System.Text.RegularExpressions.Regex.Replace(content, "<.*?>", " ");
+        // Decode HTML entities
+        plainText = System.Net.WebUtility.HtmlDecode(plainText);
+        
+        var words = plainText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         var first30 = words.Take(30);
         var result = string.Join(" ", first30);
         

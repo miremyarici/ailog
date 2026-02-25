@@ -12,9 +12,9 @@
         {
             <article class="blog-card" data-blog-id="@blog.Id">
                 <h2 class="blog-title">@blog.Title</h2>
-                <p class="blog-author"><a href="/Home/AuthorProfile/@blog.AuthorId" style="color: inherit; text-decoration: none;">@blog.Author?.Name</a></p>
+                <p class="blog-author"><a asp-controller="Profile" asp-action="AuthorProfile" asp-route-id="@blog.AuthorId" style="color: inherit; text-decoration: none;">@blog.Author?.Name</a></p>
                 <p class="blog-summary">@blog.DisplaySummary</p>
-                <a href="/Home/BlogDetail/@blog.Id" class="read-more-btn">Read More</a>
+                <a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@blog.Id" class="read-more-btn">Read More</a>
             </article>
         }
 
@@ -32,7 +32,7 @@
         <div class="empty-state">
             <h2>No trending posts found</h2>
             <p>Check back later for trending content!</p>
-            <a href="/" class="read-more-btn">Browse Articles</a>
+            <a asp-controller="Home" asp-action="Index" class="read-more-btn">Browse Articles</a>
         </div>
     }
 </main>

@@ -9,7 +9,7 @@
 <main class="main-content">
     <div class="blog-detail-container">
         <!-- Back button -->
-        <a href="@Url.Action("Index", "Home")" class="back-to-home">
+        <a asp-controller="Home" asp-action="Index" class="back-to-home">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
             </svg>
@@ -20,7 +20,7 @@
         <div class="blog-detail-header">
             <h1 class="blog-detail-title">@Model.BlogPost.Title</h1>
             <div class="blog-detail-meta">
-                <a href="/Home/AuthorProfile/@Model.BlogPost.AuthorId" class="blog-detail-author-link">
+                <a asp-controller="Profile" asp-action="AuthorProfile" asp-route-id="@Model.BlogPost.AuthorId" class="blog-detail-author-link">
                     @Model.BlogPost.Author?.Name
                 </a>
                 <span class="blog-meta-separator">•</span>

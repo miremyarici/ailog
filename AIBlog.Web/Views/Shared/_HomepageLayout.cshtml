@@ -37,7 +37,7 @@
             <nav>
                 <ul class="nav-menu">
                     <li>
-                        <a href="/" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                        <a asp-controller="Home" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
                             <span class="nav-icon">
                                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -48,7 +48,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/Home/Archive" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Archive" ? "active" : "")">
+                        <a asp-controller="Blog" asp-action="Archive" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Archive" ? "active" : "")">
                             <span class="nav-icon">
                                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/>
@@ -58,7 +58,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/Home/Explore" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Explore" ? "active" : "")">
+                        <a asp-controller="Home" asp-action="Explore" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Explore" ? "active" : "")">
                             <span class="nav-icon">
                                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="12" cy="12" r="10"/>
@@ -81,7 +81,7 @@
                         </a>
                     </li> -->
                     <li>
-                        <a href="/Home/Settings" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")">
+                        <a asp-controller="Settings" asp-action="Settings" class="nav-item @(ViewContext.RouteData.Values["action"]?.ToString() == "Settings" ? "active" : "")">
                             <span class="nav-icon">
                                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="12" cy="12" r="3"/>
@@ -117,23 +117,15 @@
                 
                 <!-- Dropdown Menu -->
                 <div class="profile-dropdown" id="profileDropdown">
-                    <a href="/Home/Profile" class="dropdown-item">
+                    <a asp-controller="Profile" asp-action="Profile" class="dropdown-item">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
                         Profile
                     </a>
-                    <a href="/Home/Help" class="dropdown-item">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                        </svg>
-                        Help
-                    </a>
                     <div class="dropdown-divider"></div>
-                    <a href="/Account/Logout" class="dropdown-item logout-item">
+                    <a asp-controller="Account" asp-action="Logout" class="dropdown-item logout-item">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                             <polyline points="16 17 21 12 16 7"></polyline>
@@ -149,7 +141,7 @@
         @RenderBody()
         
         <!-- Floating Action Button - Write New Blog -->
-        <a href="@Url.Action("Write", "Home")" class="fab-button" title="Write new blog">
+        <a asp-controller="Blog" asp-action="Write" class="fab-button" title="Write new blog">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="12" y1="5" x2="12" y2="19"/>
                 <line x1="5" y1="12" x2="19" y2="12"/>
@@ -203,12 +195,12 @@
             body.innerHTML = '<div class="followers-loading">Loading...</div>';
             overlay.classList.add('active');
 
-            fetch('/Home/GetFollowersList?authorId=' + authorId + '&type=' + type)
+            fetch('/Profile/GetFollowersList?authorId=' + authorId + '&type=' + type)
                 .then(res => res.json())
                 .then(data => {
                     if (data.success && data.users.length > 0) {
                         body.innerHTML = data.users.map(u => `
-                            <a href="/Home/AuthorProfile/${u.id}" class="followers-user-item">
+                            <a href="/Profile/AuthorProfile/${u.id}" class="followers-user-item">
                                 <div class="followers-user-avatar">
                                     ${u.avatar ? '<img src="' + u.avatar + '" alt="' + u.name + '" />' : '<span>' + u.name.charAt(0).toUpperCase() + '</span>'}
                                 </div>

@@ -4,7 +4,7 @@ public class ExploreViewModel
 {
     public List<BlogPost> TrendingBlogs { get; set; } = new();
     public List<Category> Categories { get; set; } = new();
-    public string CurrentUserName { get; set; } = "Diane Merlotte";
+    public string CurrentUserName { get; set; } = string.Empty;
     public string? CurrentUserAvatar { get; set; }
     
     // Filter parameters

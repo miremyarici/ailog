@@ -277,9 +277,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         article.dataset.blogId = post.id;
                         article.innerHTML = `
                             <h2 class="blog-title">${post.title}</h2>
-                            <p class="blog-author"><a href="/Home/AuthorProfile/${post.authorId}" style="color: inherit; text-decoration: none;">${post.authorName}</a></p>
+                            <p class="blog-author"><a href="/Profile/AuthorProfile/${post.authorId}" style="color: inherit; text-decoration: none;">${post.authorName}</a></p>
                             <p class="blog-summary">${post.summary}</p>
-                            <a href="/Home/BlogDetail/${post.id}" class="read-more-btn">Read More</a>
+                            <a href="/Blog/BlogDetail/${post.id}" class="read-more-btn">Read More</a>
                         `;
                         container.insertBefore(article, loadMoreContainer);
                     });

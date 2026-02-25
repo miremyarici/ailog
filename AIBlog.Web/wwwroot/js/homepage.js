@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
             loadMoreBtn.innerHTML = '<span class="loading-spinner"></span> Loading...';
 
             try {
-                const response = await fetch(`/Home/LoadMorePosts?page=${page}`);
+                const response = await fetch(`/Blog/LoadMorePosts?page=${page}`);
                 const data = await response.json();
 
                 if (data.posts && data.posts.length > 0) {
