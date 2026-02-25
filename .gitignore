@@ -10,6 +10,8 @@ env/
 
 # Çevresel Değişkenler (Şifrelerin olduğu yer - ÇOK ÖNEMLİ)
 .env
+appsettings.Development.json
+appsettings.Local.json
 
 # İşletim Sistemi dosyaları
 .DS_Store
@@ -18,7 +20,15 @@ Thumbs.db
 # IDE Ayarları (Editör ayarların sende kalsın)
 .vscode/
 .idea/
+*.user
 
 # Veritabanı (Eğer yerel veritabanı denemeleri yaparsan)
 *.sqlite3
 *.db
+
+# .NET / C# Derleme Dosyaları (Github'a atılmaz)
+bin/
+obj/
+*.user
+*.suo
+*.sln.docstates
