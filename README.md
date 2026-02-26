@@ -54,7 +54,7 @@ Since the LLM requires GPU acceleration, it is hosted on Google Colab.
 
 2. Navigate to the project directory:
    ```bash
-   cd AI-BLog/AIBlog.Web
+   cd ailog/AIBlog.Web
    ```
 
 3. Update `appsettings.json`:
