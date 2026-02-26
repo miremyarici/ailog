@@ -1,34 +1,46 @@
-# Python derleme dosyaları (Gereksiz kalabalık)
+# ==========================================
+# PYTHON & AI
+# ==========================================
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Sanal Ortam Klasörleri (Github'a asla atılmaz)
 venv/
 .venv/
 env/
+.ipynb_checkpoints/    # (Hides Google Colab/Jupyter notebook artifacts)
 
-# Çevresel Değişkenler (Şifrelerin olduğu yer - ÇOK ÖNEMLİ)
+# ==========================================
+# ENVIRONMENT VARIABLES & SECRETS
+# ==========================================
 .env
 appsettings.Development.json
 appsettings.Local.json
+secrets.json
 
-# İşletim Sistemi dosyaları
+# ==========================================
+# IDE & OS FILES (VERY IMPORTANT)
+# ==========================================
 .DS_Store
 Thumbs.db
-
-# IDE Ayarları (Editör ayarların sende kalsın)
 .vscode/
 .idea/
-*.user
-
-# Veritabanı (Eğer yerel veritabanı denemeleri yaparsan)
-*.sqlite3
-*.db
-
-# .NET / C# Derleme Dosyaları (Github'a atılmaz)
-bin/
-obj/
-*.user
+.vs/                   # (Visual Studio's massive hidden cache folder)
+*.user                 # (Unnecessary project user settings)
+*.userprefs
 *.suo
 *.sln.docstates
+
+# ==========================================
+# DATABASE & LOGS
+# ==========================================
+*.sqlite3
+*.db
+*.log                  # (Prevents error log files from being pushed to GitHub)
+logs/
+
+# ==========================================
+# .NET / C# BUILD FILES (NEVER PUSH TO GITHUB)
+# ==========================================
+bin/
+obj/
+TestResults/           # (Hides test results if you write unit tests in the future)
