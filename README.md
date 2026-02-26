@@ -46,6 +46,28 @@ Since the LLM requires GPU acceleration, it is hosted on Google Colab.
 4. Run the cell. Note the generated Ngrok public URL (e.g., `https://xyz.ngrok-free.app`).
 
 ### 2. Setting up the Web Application
+
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/](https://github.com/)[Your-GitHub-Username]/AILog.git
+   git clone https://github.com/miremyarici/ailog.git
+   ```
+
+2. Navigate to the project directory:
+   ```bash
+   cd AI-BLog/AIBlog.Web
+   ```
+
+3. Update `appsettings.json`:
+   * Update the `DefaultConnection` string for your local SQL Server.
+   * Add the Ngrok URL generated from Colab to `AIService:BaseUrl`.
+   * Configure `SmtpSettings` for email verification (Never commit real passwords!).
+
+4. Apply Entity Framework Migrations:
+   ```bash
+   dotnet ef database update
+   ```
+
+5. Run the application:
+   ```bash
+   dotnet run
+   ```
