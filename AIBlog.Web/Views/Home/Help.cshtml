@@ -1,0 +1,177 @@
+@{
+    ViewData["Title"] = "Help Center";
+    Layout = "_HomepageLayout";
+}
+
+<link rel="stylesheet" href="~/css/help.css" asp-append-version="true" />
+
+<!-- Main Content -->
+<main class="main-content help-content">
+    
+    <div class="help-header">
+        <h1 class="page-title">Help Center</h1>
+        <p class="page-subtitle">Find answers to your questions and learn how to use AILog.</p>
+    </div>
+
+    <div class="help-sections">
+        
+        <section class="help-topic-section" id="getting-started">
+            <h2 class="topic-title">Getting Started</h2>
+            <div class="topic-content">
+                <p>Welcome to AILog! Here's what you need to know to get started:</p>
+                <ul class="help-list">
+                    <li><strong>Creating an Account:</strong> Click the Sign Up button to create your free account.</li>
+                    <li><strong>Setting up your Profile:</strong> Go to your Profile settings to add an avatar, bio, and social links.</li>
+                    <li><strong>Writing your first post:</strong> Click the Write button (or the + icon on desktop) to open the editor.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="help-topic-section" id="ai-assistant">
+            <h2 class="topic-title">AI Assistant (GPT-2)</h2>
+            <div class="topic-content">
+                <p>AILog features a built-in AI writing assistant to help you overcome writer's block.</p>
+                <ul class="help-list">
+                    <li><strong>How it works:</strong> The AI analyzes your text as you type and suggests the most likely next words.</li>
+                    <li><strong>Turning it on/off:</strong> Use the AI Badge toggle in the top right corner of the editor.</li>
+                    <li><strong>Usage limits:</strong> The AI runs locally. Ensure your connection to the Colab notebook is active.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="help-topic-section" id="account-security">
+            <h2 class="topic-title">Account & Security</h2>
+            <div class="topic-content">
+                <p>Manage your account settings and keep your information secure.</p>
+                <ul class="help-list">
+                    <li><strong>Changing your password:</strong> Go to Settings > Security to update your password.</li>
+                    <li><strong>Privacy settings:</strong> Control who can see your profile and posts in the Privacy tab.</li>
+                    <li><strong>Deleting your account:</strong> You can permanently delete your account from the bottom of the Settings page.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="help-topic-section" id="reading-interacting">
+            <h2 class="topic-title">Reading & Interacting</h2>
+            <div class="topic-content">
+                <p>Engage with the AILog community and discover great content.</p>
+                <ul class="help-list">
+                    <li><strong>Following Authors:</strong> Click the Follow button on an author's profile or post to see more of their work.</li>
+                    <li><strong>Bookmarking:</strong> Save posts to read later by clicking the bookmark icon.</li>
+                    <li><strong>Claps/Likes:</strong> Show your appreciation for a post by leaving a clap or like.</li>
+                </ul>
+            </div>
+        </section>
+        
+    </div>
+
+    <div class="faq-section">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        
+        <div class="faq-item">
+            <button class="faq-question">
+                How does the AI word prediction work?
+                <span class="faq-toggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </span>
+            </button>
+            <div class="faq-answer">
+                <p>Our AI uses a locally hosted GPT-2 model. As you type in the editor, it analyzes your context and suggests the most likely next words to help you write faster.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">
+                Can I turn off the AI suggestions?
+                <span class="faq-toggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </span>
+            </button>
+            <div class="faq-answer">
+                <p>Yes. You can easily toggle the AI assistant on or off using the badge indicator at the top right corner of the writing editor.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">
+                How do I change my profile visibility?
+                <span class="faq-toggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </span>
+            </button>
+            <div class="faq-answer">
+                <p>Go to Settings > Security. From there, you can change your profile visibility and other privacy-related options.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Right Sidebar -->
+<aside class="right-sidebar">
+    <!-- Standard Search Box -->
+    <div class="search-box">
+        <input type="text" id="helpSearchInput" placeholder="Search knowledge base..." />
+        <button type="button" class="search-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2"/>
+            </svg>
+        </button>
+    </div>
+
+    <section class="quick-links-section">
+        <h3 class="section-title">Quick Navigation</h3>
+        <ul class="help-quick-links">
+            <li><a href="#getting-started">Getting Started</a></li>
+            <li><a href="#ai-assistant">AI Assistant (GPT-2)</a></li>
+            <li><a href="#account-security">Account & Security</a></li>
+            <li><a href="#reading-interacting">Reading & Interacting</a></li>
+        </ul>
+    </section>
+
+    <section class="contact-support-section">
+        <div class="support-card">
+            <h3>Still need help?</h3>
+            <p>Can't find the answer you're looking for? Our team is here to help.</p>
+            <a href="mailto:support@ailog.com" class="action-btn">Contact Support</a>
+        </div>
+    </section>
+</aside>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const faqItem = button.parentElement;
+                const isActive = faqItem.classList.contains('active');
+                
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                    item.querySelector('.faq-toggle svg').style.transform = 'rotate(0deg)';
+                });
+
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                    button.querySelector('.faq-toggle svg').style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+        
+        // Basic search filtering
+        document.getElementById('helpSearchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const sections = document.querySelectorAll('.help-topic-section');
+            const faqs = document.querySelectorAll('.faq-item');
+            
+            sections.forEach(section => {
+                const text = section.textContent.toLowerCase();
+                section.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+            
+            faqs.forEach(faq => {
+                const text = faq.textContent.toLowerCase();
+                faq.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+    </script>
+}

@@ -41,11 +41,24 @@ public class SettingsController : BaseController
 
         var categories = await _context.Categories.ToListAsync();
         
-        // Get user's selected interests
         var selectedInterests = await _context.AuthorInterests
             .Where(ai => ai.AuthorId == GetCurrentUserId())
             .Select(ai => ai.CategoryId)
             .ToListAsync();
+
+        var activeSessions = await _context.AuthorSessions
+            .Where(s => s.AuthorId == GetCurrentUserId() && !s.IsRevoked)
+            .OrderByDescending(s => s.LastActive)
+            .ToListAsync();
+
+        var currentSessionId = HttpContext.Session.GetInt32("CurrentSessionId");
+        if (currentSessionId.HasValue)
+        {
+            foreach (var session in activeSessions)
+            {
+                session.IsCurrentDevice = session.Id == currentSessionId.Value;
+            }
+        }
 
         var viewModel = new SettingsViewModel
         {
@@ -58,7 +71,8 @@ public class SettingsController : BaseController
             ProfileVisibility = author.ProfileVisibility ?? "Public",
             SearchEngineVisibility = author.SearchEngineVisibility ?? true,
             AllCategories = categories,
-            SelectedCategoryIds = selectedInterests
+            SelectedCategoryIds = selectedInterests,
+            ActiveSessions = activeSessions
         };
 
         return View(viewModel);

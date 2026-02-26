@@ -51,7 +51,9 @@ public class BlogController : BaseController
         try
         {
             // Create summary from content (first 200 characters of plain text)
-            var plainText = System.Text.RegularExpressions.Regex.Replace(request.Content, "<.*?>", " ");
+            var plainText = request.Content.Replace("&nbsp;", " ").Replace("\u00A0", " ");
+            plainText = System.Text.RegularExpressions.Regex.Replace(plainText, "<.*?>", " ");
+            plainText = System.Net.WebUtility.HtmlDecode(plainText);
             var summary = plainText.Length > 200 ? plainText.Substring(0, 200) + "..." : plainText;
 
             // Create slug from title
@@ -94,6 +96,28 @@ public class BlogController : BaseController
                 };
 
                 _context.BlogPosts.Add(blogPost);
+
+                // If published directly, notify followers
+                if (request.IsPublished)
+                {
+                    var authorName = HttpContext.Session.GetString("UserName") ?? "Someone";
+                    var currentUserId = GetCurrentUserId();
+                    var followerIds = await _context.Follows
+                        .Where(f => f.FollowingId == currentUserId)
+                        .Select(f => f.FollowerId)
+                        .ToListAsync();
+
+                    var notifications = followerIds.Select(fId => new Notification
+                    {
+                        UserId = fId,
+                        Message = $"{authorName} published a new post: {request.Title}",
+                        Type = "NewPost",
+                        ReferenceLink = $"/Blog/BlogDetail/{blogPost.Id}",
+                        CreatedAt = DateTime.Now
+                    });
+
+                    _context.Notifications.AddRange(notifications);
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -183,6 +207,25 @@ public class BlogController : BaseController
         await _context.SaveChangesAsync();
 
         var author = await _context.Authors.FirstOrDefaultAsync(a => a.Id == userId);
+
+        // Optional: Notify if it's a reply
+        if (request.ParentCommentId.HasValue)
+        {
+            var parentComment = await _context.Comments.FindAsync(request.ParentCommentId.Value);
+            if (parentComment != null && parentComment.AuthorId != userId)
+            {
+                _context.Notifications.Add(new Notification
+                {
+                    UserId = parentComment.AuthorId,
+                    Message = $"{author?.Name ?? "Someone"} replied to your comment.",
+                    Type = "Reply",
+                    ReferenceLink = $"/Blog/BlogDetail/{request.BlogPostId}",
+                    CreatedAt = DateTime.Now
+                });
+                await _context.SaveChangesAsync();
+            }
+        }
+
 
         return Ok(new
         {
@@ -350,4 +393,18 @@ public class BlogController : BaseController
 
         return Json(new { posts, hasMore, currentPage = page });
     }
+
+    [HttpPost]
+        public async Task<IActionResult> GetAiPrediction([FromBody] AIBlog.Web.Models.Requests.AiPredictionRequest request, [FromServices] AIBlog.Web.Services.WordPredictionService aiService)
+        {
+    if (string.IsNullOrWhiteSpace(request.Text))
+        return Json(new { success = false, predictions = new List<string>() });
+
+    var response = await aiService.GetPredictionsAsync(request.Text, request.Count);
+    
+    return Json(new { 
+        success = response.Success, 
+        predictions = response.Predictions 
+    });
+}
 }

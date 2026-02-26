@@ -248,56 +248,144 @@ document.addEventListener('DOMContentLoaded', function () {
         if (currentFilters.categoryId) params.set('categoryId', currentFilters.categoryId);
         if (currentFilters.sortBy) params.set('sortBy', currentFilters.sortBy);
 
-        window.location.href = '/Home/Explore?' + params.toString();
-    }
+        // Fetch results via AJAX
+        fetch('/Home/SearchExplore?' + params.toString())
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('blogContainer');
+                container.innerHTML = ''; // Clear container
 
-    // Load more functionality
-    if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', function () {
-            const page = parseInt(this.dataset.page);
-            this.disabled = true;
-            this.innerHTML = '<span class="loading-spinner"></span> Loading...';
+                let htmlContent = '';
 
-            const params = new URLSearchParams();
-            params.set('page', page);
-            if (currentFilters.search) params.set('search', currentFilters.search);
-            if (currentFilters.timePeriod) params.set('timePeriod', currentFilters.timePeriod);
-            if (currentFilters.categoryId) params.set('categoryId', currentFilters.categoryId);
-            if (currentFilters.sortBy) params.set('sortBy', currentFilters.sortBy);
+                // Handle Users Section if search exists
+                if (data.query) {
+                    htmlContent += '<div class="search-results-section"><h3 class="section-title">Users</h3>';
 
-            fetch('/Home/LoadMoreExplore?' + params.toString())
-                .then(response => response.json())
-                .then(data => {
-                    const container = document.getElementById('blogContainer');
-                    const loadMoreContainer = document.getElementById('loadMoreContainer');
-
-                    data.posts.forEach(post => {
-                        const article = document.createElement('article');
-                        article.className = 'blog-card';
-                        article.dataset.blogId = post.id;
-                        article.innerHTML = `
-                            <h2 class="blog-title">${post.title}</h2>
-                            <p class="blog-author"><a href="/Profile/AuthorProfile/${post.authorId}" style="color: inherit; text-decoration: none;">${post.authorName}</a></p>
-                            <p class="blog-summary">${post.summary}</p>
-                            <a href="/Blog/BlogDetail/${post.id}" class="read-more-btn">Read More</a>
+                    if (data.authors && data.authors.length > 0) {
+                        htmlContent += '<div class="authors-grid" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px;">';
+                        data.authors.forEach(author => {
+                            htmlContent += `
+                                <a href="/Profile/AuthorProfile/${author.id}" class="author-info" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); transition: transform 0.2s, box-shadow 0.2s;">
+                                    <div class="author-avatar" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--bg-card-alt); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                        ${author.avatar
+                                    ? `<img src="${author.avatar}" alt="${author.name}" style="width: 100%; height: 100%; object-fit: cover;" />`
+                                    : `<span style="font-size: 1rem; font-weight: 600; color: var(--text-secondary);">${author.initials}</span>`}
+                                    </div>
+                                    <span class="author-name" style="font-weight: 600; font-size: 1rem;">${author.name}</span>
+                                </a>
+                            `;
+                        });
+                        htmlContent += '</div>';
+                    } else {
+                        htmlContent += `
+                            <div class="empty-state" style="margin-bottom: 32px; padding: 24px; text-align: left; background: transparent; border: 1px dashed var(--border-color);">
+                                <p>No users found matching "${data.query}".</p>
+                            </div>
                         `;
-                        container.insertBefore(article, loadMoreContainer);
+                    }
+                    htmlContent += '<h3 class="section-title">Articles</h3></div>';
+                }
+
+                // Handle Articles Section
+                if (data.blogs && data.blogs.length > 0) {
+                    data.blogs.forEach(post => {
+                        htmlContent += `
+                            <article class="blog-card" data-blog-id="${post.id}">
+                                <h2 class="blog-title">${post.title}</h2>
+                                <p class="blog-author"><a href="/Profile/AuthorProfile/${post.authorId}" style="color: inherit; text-decoration: none;">${post.authorName}</a></p>
+                                <p class="blog-summary">${post.summary}</p>
+                                <a href="/Blog/BlogDetail/${post.id}" class="read-more-btn">Read More</a>
+                            </article>
+                        `;
                     });
 
+                    // Add Load More indicator if hasMore
                     if (data.hasMore) {
-                        loadMoreBtn.dataset.page = page + 1;
-                        loadMoreBtn.disabled = false;
-                        loadMoreBtn.textContent = 'Load More';
-                    } else {
-                        loadMoreContainer.style.display = 'none';
+                        htmlContent += `
+                            <div class="load-more-container" id="loadMoreContainer">
+                                <button class="load-more-btn" id="loadMoreBtn" data-page="2">
+                                    Load More
+                                </button>
+                            </div>
+                        `;
                     }
-                })
-                .catch(error => {
-                    console.error('Error loading more posts:', error);
-                    loadMoreBtn.disabled = false;
-                    loadMoreBtn.textContent = 'Load More';
+                } else {
+                    htmlContent += `
+                        <div class="empty-state">
+                            ${data.query
+                            ? `<h2>No articles found</h2>
+                                   <p>Try different keywords or filters.</p>
+                                   <a href="/Home/Explore" class="read-more-btn" style="margin-top: 16px;">Clear Search</a>`
+                            : `<h2>No trending posts found</h2>
+                                   <p>Check back later for trending content!</p>
+                                   <a href="/Home/Index" class="read-more-btn">Browse Articles</a>`}
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = htmlContent;
+
+                // Re-attach Load More logic if button exists
+                const newLoadMoreBtn = document.getElementById('loadMoreBtn');
+                if (newLoadMoreBtn) {
+                    newLoadMoreBtn.addEventListener('click', handleLoadMore);
+                }
+            })
+            .catch(error => {
+                console.error("Error applying filters:", error);
+            });
+    }
+
+    // Extracted logic to be attached to dynamic load more buttons
+    function handleLoadMore() {
+        const page = parseInt(this.dataset.page);
+        this.disabled = true;
+        this.innerHTML = '<span class="loading-spinner"></span> Loading...';
+
+        const params = new URLSearchParams();
+        params.set('page', page);
+        if (currentFilters.search) params.set('search', currentFilters.search);
+        if (currentFilters.timePeriod) params.set('timePeriod', currentFilters.timePeriod);
+        if (currentFilters.categoryId) params.set('categoryId', currentFilters.categoryId);
+        if (currentFilters.sortBy) params.set('sortBy', currentFilters.sortBy);
+
+        fetch('/Home/LoadMoreExplore?' + params.toString())
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('blogContainer');
+                const loadMoreContainer = document.getElementById('loadMoreContainer');
+
+                data.posts.forEach(post => {
+                    const article = document.createElement('article');
+                    article.className = 'blog-card';
+                    article.dataset.blogId = post.id;
+                    article.innerHTML = `
+                        <h2 class="blog-title">${post.title}</h2>
+                        <p class="blog-author"><a href="/Profile/AuthorProfile/${post.authorId}" style="color: inherit; text-decoration: none;">${post.authorName}</a></p>
+                        <p class="blog-summary">${post.summary}</p>
+                        <a href="/Blog/BlogDetail/${post.id}" class="read-more-btn">Read More</a>
+                    `;
+                    container.insertBefore(article, loadMoreContainer);
                 });
-        });
+
+                if (data.hasMore) {
+                    this.dataset.page = page + 1;
+                    this.disabled = false;
+                    this.textContent = 'Load More';
+                } else {
+                    loadMoreContainer.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading more posts:', error);
+                this.disabled = false;
+                this.textContent = 'Load More';
+            });
+    }
+
+    // Initial Load More attachment
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', handleLoadMore);
     }
 
     // FAB click handler

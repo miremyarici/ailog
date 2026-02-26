@@ -71,6 +71,10 @@ namespace AIBlog.Web.Services
         {
             try
             {
+                if (!_httpClient.DefaultRequestHeaders.Contains("ngrok-skip-browser-warning"))
+                {
+                    _httpClient.DefaultRequestHeaders.Add("ngrok-skip-browser-warning", "true");
+                }
                 var content = new StringContent(
                     JsonSerializer.Serialize(payload, _jsonOptions),
                     Encoding.UTF8,

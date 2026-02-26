@@ -24,7 +24,7 @@
                     @Model.BlogPost.Author?.Name
                 </a>
                 <span class="blog-meta-separator">•</span>
-                <span class="blog-detail-date">@Model.BlogPost.CreatedAt.ToString("MMMM dd, yyyy")</span>
+                <span class="blog-detail-date">@Model.BlogPost.CreatedAt.ToString("MMMM dd, yyyy", new System.Globalization.CultureInfo("en-US"))</span>
                 <span class="blog-meta-separator">•</span>
                 <span class="blog-detail-category">@Model.BlogPost.Category?.Name</span>
             </div>
@@ -65,18 +65,20 @@
                 {
                     <div class="comment-item" data-comment-id="@comment.Id">
                         <div class="comment-header">
-                            <div class="comment-avatar">
-                                @if (!string.IsNullOrEmpty(comment.Author?.Avatar))
-                                {
-                                    <img src="@comment.Author.Avatar" alt="@comment.Author.Name" />
-                                }
-                                else
-                                {
-                                    <span>@comment.Author?.Name?.Substring(0, 1).ToUpper()</span>
-                                }
-                            </div>
-                            <span class="comment-author-name">@comment.Author?.Name</span>
-                            <span class="comment-date">@comment.CreatedAt.ToString("MMM dd, yyyy")</span>
+                            <a asp-controller="Profile" asp-action="AuthorProfile" asp-route-id="@comment.AuthorId" class="comment-author-link" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.8rem;">
+                                <div class="comment-avatar">
+                                    @if (!string.IsNullOrEmpty(comment.Author?.Avatar))
+                                    {
+                                        <img src="@comment.Author.Avatar" alt="@comment.Author.Name" />
+                                    }
+                                    else
+                                    {
+                                        <span>@comment.Author?.Name?.Substring(0, 1).ToUpper()</span>
+                                    }
+                                </div>
+                                <span class="comment-author-name hover-underline">@comment.Author?.Name</span>
+                            </a>
+                            <span class="comment-date">@comment.CreatedAt.ToString("MMM dd, yyyy", new System.Globalization.CultureInfo("en-US"))</span>
                         </div>
                         <p class="comment-content">@comment.Content</p>
                         <button class="reply-btn" data-comment-id="@comment.Id">Reply</button>
@@ -89,18 +91,20 @@
                                 {
                                     <div class="comment-item" data-comment-id="@reply.Id">
                                         <div class="comment-header">
-                                            <div class="comment-avatar">
-                                                @if (!string.IsNullOrEmpty(reply.Author?.Avatar))
-                                                {
-                                                    <img src="@reply.Author.Avatar" alt="@reply.Author.Name" />
-                                                }
-                                                else
-                                                {
-                                                    <span>@reply.Author?.Name?.Substring(0, 1).ToUpper()</span>
-                                                }
-                                            </div>
-                                            <span class="comment-author-name">@reply.Author?.Name</span>
-                                            <span class="comment-date">@reply.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                            <a asp-controller="Profile" asp-action="AuthorProfile" asp-route-id="@reply.AuthorId" class="comment-author-link" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.8rem;">
+                                                <div class="comment-avatar">
+                                                    @if (!string.IsNullOrEmpty(reply.Author?.Avatar))
+                                                    {
+                                                        <img src="@reply.Author.Avatar" alt="@reply.Author.Name" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@reply.Author?.Name?.Substring(0, 1).ToUpper()</span>
+                                                    }
+                                                </div>
+                                                <span class="comment-author-name hover-underline">@reply.Author?.Name</span>
+                                            </a>
+                                            <span class="comment-date">@reply.CreatedAt.ToString("MMM dd, yyyy", new System.Globalization.CultureInfo("en-US"))</span>
                                         </div>
                                         <p class="comment-content">@reply.Content</p>
                                         <button class="reply-btn" data-comment-id="@comment.Id">Reply</button>

@@ -97,6 +97,30 @@
 
         <!-- Top Bar (Sabit - Tüm Sayfalarda Ortak) -->
         <header class="top-bar">
+            
+            <!-- Notifications -->
+            <div class="notifications-wrapper" id="notificationsBtn">
+                <button class="notification-icon">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="notification-badge" id="unreadBadge" style="display: none;">0</span>
+                </button>
+                
+                <div class="notification-dropdown" id="notificationDropdown">
+                    <div class="notification-header">
+                        <h4>Notifications</h4>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <!-- Notifications will be loaded here via AJAX -->
+                    </div>
+                    <div class="notification-loading" id="notificationLoading" style="display: none;">
+                        <span class="loading-spinner" style="width: 14px; height: 14px; border-width: 2px;"></span>
+                    </div>
+                </div>
+            </div>
+
             <div class="user-profile" id="userProfileBtn">
                 <span class="user-name">@ViewBag.CurrentUserName</span>
                 <div class="user-avatar">
@@ -123,6 +147,20 @@
                             <circle cx="12" cy="7" r="4"></circle>
                         </svg>
                         Profile
+                    </a>
+                    
+                    
+                    
+                    
+                    
+                    
+                    <a asp-controller="Home" asp-action="Help" class="dropdown-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        Help
                     </a>
                     <div class="dropdown-divider"></div>
                     <a asp-controller="Account" asp-action="Logout" class="dropdown-item logout-item">
@@ -183,6 +221,7 @@
             }
         });
     </script>
+    <script src="~/js/global.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
     <script>

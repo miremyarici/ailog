@@ -6,6 +6,42 @@
 
 <!-- Main Content -->
 <main class="main-content" id="blogContainer">
+    @if (!string.IsNullOrEmpty(Model.SearchQuery))
+    {
+        <div class="search-results-section">
+            <h3 class="section-title">Users</h3>
+            @if (Model.SearchedAuthors != null && Model.SearchedAuthors.Any())
+            {
+                <div class="authors-grid" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px;">
+                    @foreach (var author in Model.SearchedAuthors)
+                    {
+                        <a asp-controller="Profile" asp-action="AuthorProfile" asp-route-id="@author.Id" class="author-info" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); transition: transform 0.2s, box-shadow 0.2s;">
+                            <div class="author-avatar" style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--bg-card-alt); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                @if (!string.IsNullOrEmpty(author.Avatar))
+                                {
+                                    <img src="@author.Avatar" alt="@author.Name" style="width: 100%; height: 100%; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <span style="font-size: 1rem; font-weight: 600; color: var(--text-secondary);">@author.Name.Substring(0, 1).ToUpper()</span>
+                                }
+                            </div>
+                            <span class="author-name" style="font-weight: 600; font-size: 1rem;">@author.Name</span>
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state" style="margin-bottom: 32px; padding: 24px; text-align: left; background: transparent; border: 1px dashed var(--border-color);">
+                    <p>No users found matching "@Model.SearchQuery".</p>
+                </div>
+            }
+
+            <h3 class="section-title">Articles</h3>
+        </div>
+    }
+
     @if (Model.TrendingBlogs.Any())
     {
         @foreach (var blog in Model.TrendingBlogs)
@@ -30,9 +66,18 @@
     else
     {
         <div class="empty-state">
-            <h2>No trending posts found</h2>
-            <p>Check back later for trending content!</p>
-            <a asp-controller="Home" asp-action="Index" class="read-more-btn">Browse Articles</a>
+            @if (!string.IsNullOrEmpty(Model.SearchQuery))
+            {
+                <h2>No articles found</h2>
+                <p>Try different keywords or filters.</p>
+                <a asp-controller="Home" asp-action="Explore" class="read-more-btn" style="margin-top: 16px;">Clear Search</a>
+            }
+            else
+            {
+                <h2>No trending posts found</h2>
+                <p>Check back later for trending content!</p>
+                <a asp-controller="Home" asp-action="Index" class="read-more-btn">Browse Articles</a>
+            }
         </div>
     }
 </main>
@@ -41,7 +86,7 @@
 <aside class="right-sidebar">
     <!-- Search -->
     <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Search by title..." value="@Model.SearchQuery" />
+        <input type="text" id="searchInput" placeholder="Search an article or user" value="@Model.SearchQuery" />
         <button type="button" id="searchBtn" class="search-icon">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
                 <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/>

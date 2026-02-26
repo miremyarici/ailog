@@ -20,4 +20,6 @@ public class SettingsViewModel
     // Categories for interests
     public List<Category> AllCategories { get; set; } = new();
     public List<int> SelectedCategoryIds { get; set; } = new();
+
+    public List<AuthorSession> ActiveSessions { get; set; } = new();
 }

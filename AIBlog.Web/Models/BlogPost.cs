@@ -21,18 +21,20 @@ public class BlogPost
     public string? Summary { get; set; }
 
     // Helper property to get first 30 words for homepage display (if Summary is empty)
-    public string DisplaySummary => string.IsNullOrEmpty(Summary) ? GetFirst30Words(Content) : Summary;
+    public string DisplaySummary => string.IsNullOrEmpty(Summary) ? GetFirst30Words(Content) : Summary.Replace("&nbsp;", " ").Replace("\u00A0", " ");
 
     private static string GetFirst30Words(string content)
     {
         if (string.IsNullOrEmpty(content)) return string.Empty;
         
+        // Replace non-breaking spaces with regular space
+        var plainText = content.Replace("&nbsp;", " ").Replace("\u00A0", " ");
         // Remove HTML tags using Regex
-        var plainText = System.Text.RegularExpressions.Regex.Replace(content, "<.*?>", " ");
+        plainText = System.Text.RegularExpressions.Regex.Replace(plainText, "<.*?>", " ");
         // Decode HTML entities
         plainText = System.Net.WebUtility.HtmlDecode(plainText);
         
-        var words = plainText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var words = plainText.Split(new[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries);
         var first30 = words.Take(30);
         var result = string.Join(" ", first30);
         

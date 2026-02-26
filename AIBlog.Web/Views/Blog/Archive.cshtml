@@ -56,7 +56,7 @@
                     <p class="blog-author">@blog.Category?.Name</p>
                     <p class="blog-summary">@blog.DisplaySummary</p>
                     <div class="draft-meta">
-                        <span class="draft-date">Saved @blog.CreatedAt.ToString("dd MMM yyyy")</span>
+                        <span class="draft-date">Saved @blog.CreatedAt.ToString("dd MMM yyyy", new System.Globalization.CultureInfo("en-US"))</span>
                         <a asp-controller="Blog" asp-action="Write" asp-route-id="@blog.Id" class="read-more-btn">Edit</a>
                     </div>
                 </article>
@@ -97,7 +97,7 @@
                 <button class="filter-btn @(Model.TimePeriod == "this-week" ? "active" : "")" data-filter="timePeriod" data-value="this-week">This Week</button>
                 <button class="filter-btn @(Model.TimePeriod == "this-month" ? "active" : "")" data-filter="timePeriod" data-value="this-month">This Month</button>
                 <button class="filter-btn @(Model.TimePeriod == "this-year" ? "active" : "")" data-filter="timePeriod" data-value="this-year">This Year</button>
-                <button class="filter-btn" data-filter="timePeriod" data-value="">Choose a date</button>
+                <button class="filter-btn @(Model.TimePeriod == "custom" ? "active" : "")" id="chooseDateBtn" data-filter="timePeriod" data-value="custom">Choose a date</button>
             </div>
         </div>
 
@@ -131,6 +131,31 @@
         </div>
     </section>
 </aside>
+
+<!-- Date Picker Modal -->
+<div class="date-picker-modal" id="datePickerModal">
+    <div class="date-picker-overlay" id="datePickerOverlay"></div>
+    <div class="date-picker-content">
+        <h3 class="date-picker-title">Select Date</h3>
+        <div class="date-picker-selects">
+            <div class="date-select-group">
+                <label>Day</label>
+                <select id="daySelect"></select>
+            </div>
+            <div class="date-select-group">
+                <label>Month</label>
+                <select id="monthSelect"></select>
+            </div>
+            <div class="date-select-group">
+                <label>Year</label>
+                <select id="yearSelect"></select>
+            </div>
+        </div>
+        <div class="date-picker-actions">
+            <button class="date-picker-save-btn" id="datePickerSave">Save</button>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script src="~/js/archive.js"></script>

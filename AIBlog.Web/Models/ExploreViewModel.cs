@@ -18,4 +18,7 @@ public class ExploreViewModel
     public bool HasMorePosts { get; set; }
     public int CurrentPage { get; set; } = 1;
     public int TotalPosts { get; set; }
+    
+    // New property for user search
+    public List<Author> SearchedAuthors { get; set; } = new();
 }

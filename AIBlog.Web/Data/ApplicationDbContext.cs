@@ -15,6 +15,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<ReadHistory> ReadHistories { get; set; }
     public DbSet<AuthorInterest> AuthorInterests { get; set; }
+    public DbSet<AuthorSession> AuthorSessions { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Follow> Follows { get; set; }

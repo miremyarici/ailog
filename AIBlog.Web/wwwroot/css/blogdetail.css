@@ -219,6 +219,12 @@
     font-weight: 600;
     font-size: 0.9rem;
     color: var(--text-heading);
+    transition: color 0.2s ease;
+}
+
+.comment-author-link:hover .hover-underline {
+    text-decoration: underline;
+    color: var(--accent-color);
 }
 
 .comment-date {

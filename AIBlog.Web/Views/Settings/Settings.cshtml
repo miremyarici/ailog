@@ -157,8 +157,23 @@
                 <div class="privacy-item">
                     <span class="privacy-label">Active Sessions</span>
                     <ul class="sessions-list">
-                        <li>MacBook Pro - New York, USA (current device)</li>
-                        <li>Chrome (Windows) - San Francisco, USA</li>
+                        @if (Model.ActiveSessions != null && Model.ActiveSessions.Any())
+                        {
+                            foreach (var session in Model.ActiveSessions)
+                            {
+                                <li>
+                                    @session.DeviceName - @session.Location
+                                    @if (session.IsCurrentDevice)
+                                    {
+                                        <text> (current device)</text>
+                                    }
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No active sessions found.</li>
+                        }
                     </ul>
                 </div>
             </div>
