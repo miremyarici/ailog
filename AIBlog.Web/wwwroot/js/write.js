@@ -18,8 +18,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const aiBadge = document.getElementById('aiBadge');
     const aiDot = aiBadge?.querySelector('.ai-dot');
     const aiStatusText = document.getElementById('aiStatusText');
-    if (aiDot) aiDot.classList.remove('offline');
-    if (aiStatusText) aiStatusText.textContent = 'AI is active';
+
+    // Check AI status from backend
+    fetch('/Blog/CheckAiStatus')
+        .then(res => res.json())
+        .then(data => {
+            if (data.isHealthy) {
+                isAIActive = true;
+                if (aiDot) aiDot.classList.remove('offline');
+                if (aiStatusText) aiStatusText.textContent = 'AI is active';
+            } else {
+                isAIActive = false;
+                if (aiDot) aiDot.classList.add('offline');
+                if (aiStatusText) aiStatusText.textContent = 'AI is not active';
+            }
+        })
+        .catch(err => {
+            isAIActive = false;
+            if (aiDot) aiDot.classList.add('offline');
+            if (aiStatusText) aiStatusText.textContent = 'AI is not active';
+            console.error('Failed to check AI status', err);
+        });
 
     document.addEventListener('selectionchange', function () {
         const selection = window.getSelection();
@@ -214,6 +233,60 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('click', function (e) {
         if (!aiSuggestions.contains(e.target) && e.target !== contentEditor) {
             hideSuggestions();
+        }
+    });
+
+    // ========================================
+    // Toolbar Editor Controls
+    // ========================================
+    const execCmd = (command, value = null) => {
+        contentEditor.focus();
+        document.execCommand(command, false, value);
+    };
+
+    document.getElementById('undoBtn')?.addEventListener('click', (e) => { e.preventDefault(); execCmd('undo'); });
+    document.getElementById('redoBtn')?.addEventListener('click', (e) => { e.preventDefault(); execCmd('redo'); });
+    document.getElementById('boldBtn')?.addEventListener('click', (e) => { e.preventDefault(); execCmd('bold'); });
+    document.getElementById('italicBtn')?.addEventListener('click', (e) => { e.preventDefault(); execCmd('italic'); });
+    document.getElementById('underlineBtn')?.addEventListener('click', (e) => { e.preventDefault(); execCmd('underline'); });
+    document.getElementById('strikeBtn')?.addEventListener('click', (e) => { e.preventDefault(); execCmd('strikeThrough'); });
+
+    // For listBtn (bulleted list)
+    document.getElementById('listBtn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        contentEditor.focus();
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            const selectedText = range.toString();
+
+            if (selectedText) {
+                // If there's selected text, split by newlines and add bullet before each line
+                const bulletedText = selectedText.split('\n').map(line => '● ' + line).join('\n');
+                document.execCommand('insertText', false, bulletedText);
+            } else {
+                // Just insert a bullet character
+                document.execCommand('insertText', false, '● ');
+            }
+        }
+    });
+
+    // For imageBtn (device photo upload)
+    const imageFileInput = document.getElementById('imageFileInput');
+    document.getElementById('imageBtn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        imageFileInput?.click();
+    });
+
+    imageFileInput?.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                execCmd('insertImage', event.target.result);
+            };
+            reader.readAsDataURL(file);
         }
     });
 
