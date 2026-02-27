@@ -44,8 +44,14 @@ public class ProfileController : BaseController
             .Take(3)
             .ToListAsync();
 
+        // Get followed authors to exclude from recommendations
+        var followedIds = await _context.Follows
+            .Where(f => f.FollowerId == GetCurrentUserId())
+            .Select(f => f.FollowingId)
+            .ToListAsync();
+
         var recommendedAuthors = await _context.Authors
-            .Where(a => a.Id != GetCurrentUserId()) // Exclude current user from recommendations
+            .Where(a => a.Id != GetCurrentUserId() && !followedIds.Contains(a.Id)) // Exclude current user and followed authors from recommendations
             .OrderByDescending(a => a.FollowersCount)
             .Take(5)
             .ToListAsync();
