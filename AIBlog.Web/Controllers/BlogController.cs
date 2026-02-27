@@ -394,17 +394,24 @@ public class BlogController : BaseController
         return Json(new { posts, hasMore, currentPage = page });
     }
 
-    [HttpPost]
-        public async Task<IActionResult> GetAiPrediction([FromBody] AIBlog.Web.Models.Requests.AiPredictionRequest request, [FromServices] AIBlog.Web.Services.WordPredictionService aiService)
-        {
-    if (string.IsNullOrWhiteSpace(request.Text))
-        return Json(new { success = false, predictions = new List<string>() });
+    [HttpGet]
+    public async Task<IActionResult> CheckAiStatus([FromServices] AIBlog.Web.Services.WordPredictionService aiService)
+    {
+        var isHealthy = await aiService.IsServiceHealthyAsync();
+        return Json(new { isHealthy });
+    }
 
-    var response = await aiService.GetPredictionsAsync(request.Text, request.Count);
-    
-    return Json(new { 
-        success = response.Success, 
-        predictions = response.Predictions 
-    });
-}
+    [HttpPost]
+    public async Task<IActionResult> GetAiPrediction([FromBody] AIBlog.Web.Models.Requests.AiPredictionRequest request, [FromServices] AIBlog.Web.Services.WordPredictionService aiService)
+    {
+        if (string.IsNullOrWhiteSpace(request.Text))
+            return Json(new { success = false, predictions = new List<string>() });
+
+        var response = await aiService.GetPredictionsAsync(request.Text, request.Count);
+        
+        return Json(new { 
+            success = response.Success, 
+            predictions = response.Predictions 
+        });
+    }
 }
